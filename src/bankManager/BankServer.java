@@ -1,5 +1,6 @@
+package bankManager;
 /**
- * Main class, which will communicate with database
+ * 
  * @author Stacy
  *
  */
