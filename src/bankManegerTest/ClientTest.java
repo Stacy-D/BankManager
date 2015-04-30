@@ -38,6 +38,7 @@ public class ClientTest {
 		assertEquals(ID, client.getId());
 		assertEquals("Test done successful", PASSWORD, client.getPassword());
 		assertEquals(MONEY_ON_ACCOUNT, client.getMoneyOnBanlAccount());
+		assertEquals(1856373, client.addMoney(1));
 	}
 
 }

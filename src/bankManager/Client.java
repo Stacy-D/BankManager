@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.Random;
 import java.util.TimeZone;
 
+
 /**
  * it is the Client class
  * @author natalia
@@ -90,10 +91,7 @@ public class Client {
 		this.cardNumber = number;
 	}
 	
-	/* TODO
-	 * This part of code needs to be moved to another class
-	 *
-	 */
+	
 	public void createDatastore(Client aClient) {
 		 try {
 	            Class.forName("org.sqlite.JDBC");
@@ -237,4 +235,27 @@ public class Client {
 		return moneyOnBanlAccount;
 	}
 	
+	/**
+	 * withdraw money in Internet
+	 */
+	
+	public int withdrawMoneyInInternet(int moneyToWithdraw) {
+		if (moneyOnBanlAccount >= moneyToWithdraw) {
+			boolean looked = true;
+			Transaction theTransaction = new Transaction(moneyToWithdraw);
+			moneyOnBanlAccount -= moneyToWithdraw;
+			theTransaction.setSuccessful(true);
+			addTransaction(theTransaction);
+			looked = false;
+		}
+		return moneyOnBanlAccount;
+		}
+	
+	/**
+	 * you can add some money to your bank account
+	 */
+
+	public int addMoney(int moneyToAdd) {
+		return (moneyToAdd+moneyOnBanlAccount);
+	}
 }
