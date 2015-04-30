@@ -1,5 +1,7 @@
 package bankManager;
 
+import java.net.InetAddress;
+
 import javax.swing.JOptionPane;
 
 /**
@@ -117,8 +119,10 @@ public class Main extends javax.swing.JFrame {
     private void buttonClientActionPerformed(java.awt.event.ActionEvent evt) {                                             
         try
         {
-     	   int port = Integer.valueOf(fieldPortServer.getText());
+     	   int port = Integer.valueOf(fieldPortClient.getText());
      	   JOptionPane.showMessageDialog(null, "Trying accessing server at port "+port);
+     	  InetAddress addr = InetAddress.getByName(null);
+     	  new JabberClientThread(addr,port);
      	   this.dispose();
 
         }

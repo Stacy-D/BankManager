@@ -4,6 +4,8 @@ import java.net.*;
 import java.util.logging.Logger;
 import java.io.*;
 
+import panels.BankBranch;
+
 class JabberClientThread extends Thread {
 	private static final Logger LOG = Logger.getLogger(JabberClientThread.class.getName());
       
@@ -29,6 +31,7 @@ class JabberClientThread extends Thread {
 	   
    public void run() {
 	   //main action here
+	   BankBranch.main(null);
          try {
             socket.close();
          }
