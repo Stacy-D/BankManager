@@ -1,4 +1,4 @@
-package BankMeneger;
+package bankManager;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -22,7 +22,7 @@ import java.util.TimeZone;
 public class Client {
 	
 	private String name;
-	private int id;
+	private String id;
 	private String password;
 	private int cardNumber;
 	private int moneyOnBanlAccount;
@@ -31,9 +31,9 @@ public class Client {
 	private Connection connection;
 	private ArrayList<Transaction> transactions;
 	
-	private static final int MAX_DAY_LIMIT = 15000;  // MAX_DAY_LIMIT, which you can withdraw
+	private static final int MAX_DAY_LIMIT = 150000;  // MAX_DAY_LIMIT, which you can withdraw
 	
-	Client(String aName, int anId, String aPassword, int aMoneyOnBanlAccount) {
+	public Client(String aName, String anId, String aPassword, int aMoneyOnBanlAccount) {
 		name = aName;
 		id = anId;
 		password = aPassword;
@@ -52,7 +52,7 @@ public class Client {
 	 * @return the id
 	 */
 	
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -90,7 +90,10 @@ public class Client {
 		this.cardNumber = number;
 	}
 	
-	
+	/* TODO
+	 * This part of code needs to be moved to another class
+	 *
+	 */
 	public void createDatastore(Client aClient) {
 		 try {
 	            Class.forName("org.sqlite.JDBC");
@@ -112,14 +115,14 @@ public class Client {
 			try{
 	        	String name = aClient.getName();
 	        	String password = aClient.getPassword();
-	        	int clientId = aClient.getId();
+	        	String clientId = aClient.getId();
 	        	int cardNumber = aClient.getCardNumber();
 	        	int money = aClient.getMoneyOnBanlAccount();
 	          
 	        	PreparedStatement statement = connection.prepareStatement("INSERT INTO Bank(name, password, clientId, money, cardNumber) VALUES (?,?,?,?,?)");
 	            statement.setString(1, name);
 	            statement.setString(2, password);
-	            statement.setInt(3, clientId);
+	            statement.setString(3, clientId);
 	            statement.setInt(4, money);
 	            statement.setInt(5, cardNumber);
 

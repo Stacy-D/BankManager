@@ -1,4 +1,4 @@
-package BankMeneger;
+package bankManager;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -17,7 +17,7 @@ public class Transaction {
 	private boolean isSuccessful;
 	
 
-	Transaction(int aRemovedMoney) {
+	public Transaction(int aRemovedMoney) {
 		removedMoney = aRemovedMoney;
 		isSuccessful = false;
 	}

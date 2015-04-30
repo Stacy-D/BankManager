@@ -1,12 +1,14 @@
 /**
  * 
  */
-package BankMeneger;
+package bankManegerTest;
 
 import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import bankManager.Client;
 
 /**
  * @author Natalia
@@ -15,7 +17,7 @@ import org.junit.Test;
 public class ClientTest {
 	
 	private static final String NAME = "Natalia";
-	private static final int ID = 12345678;
+	private static final String ID = "12345678";
 	private static final String PASSWORD = "32456nla";
 	private static final int MONEY_ON_ACCOUNT = 1856372; 
 	

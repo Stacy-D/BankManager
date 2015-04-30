@@ -1,9 +1,11 @@
-package BankMeneger;
+package bankManegerTest;
 
 import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import bankManager.Transaction;
 
 public class TransactionTest {
 	
