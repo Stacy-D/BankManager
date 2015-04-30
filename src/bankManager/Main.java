@@ -1,4 +1,7 @@
 package bankManager;
+
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Stacy
@@ -98,11 +101,31 @@ public class Main extends javax.swing.JFrame {
     }// </editor-fold>                        
 
     private void buttonServerActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        // TODO add your handling code here:
+       try
+       {
+    	   int port = Integer.valueOf(fieldPortServer.getText());
+    	   JOptionPane.showMessageDialog(null, "Your server is running at port "+port);
+    	   this.dispose();
+    	   BankServer.startServer(port);
+       }
+       catch(Exception e)
+       {
+    	   JOptionPane.showMessageDialog(null, "Port number is incorrect");
+       }
     }                                            
 
     private void buttonClientActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        // TODO add your handling code here:
+        try
+        {
+     	   int port = Integer.valueOf(fieldPortServer.getText());
+     	   JOptionPane.showMessageDialog(null, "Trying accessing server at port "+port);
+     	   this.dispose();
+
+        }
+        catch(Exception e)
+        {
+     	   JOptionPane.showMessageDialog(null, "Port number is incorrect");
+        }
     }                                            
 
     /**

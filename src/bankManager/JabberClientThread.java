@@ -7,11 +7,12 @@ import java.io.*;
 class JabberClientThread extends Thread {
 	private static final Logger LOG = Logger.getLogger(JabberClientThread.class.getName());
       
-   public JabberClientThread(InetAddress addr) {
+   public JabberClientThread(InetAddress addr, int port) {
       threadcount++;
       try {
-         socket = new Socket(addr, BankServer.PORT); 
-         start();}
+         socket = new Socket(addr,port); 
+         start();
+         }
       catch (IOException e) {
          try {
             socket.close();
@@ -27,6 +28,7 @@ class JabberClientThread extends Thread {
    }
 	   
    public void run() {
+	   //main action here
          try {
             socket.close();
          }

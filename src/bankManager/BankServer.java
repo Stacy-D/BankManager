@@ -10,12 +10,10 @@ import java.net.Socket;
  *
  */
 public class BankServer {
-		static final int PORT = 8080;
 		
-		public static void main(String[] args) throws IOException{
-			ServerSocket s = new ServerSocket(PORT);
-			System.out.println("Bank server in action.");
-			
+		public static void startServer(int port) throws IOException{
+			ServerSocket s = new ServerSocket(Integer.valueOf(port));
+			System.out.println("Bank server in action."); 
 			try{
 				while (true){
 					Socket socket = s.accept();
