@@ -73,26 +73,37 @@ public class BankService {
 		}
 	}
 	
-	public boolean isClientInDatastore() {
-		Statement statement = null;
-    	try {
+	public boolean selectFrom(String aName) throws SQLException {
+    	Statement statement = null;
+    	String name  = null;
     		statement = connection.createStatement();
     		ResultSet resSet = statement.executeQuery("SELECT * FROM Bank;");
     		while (resSet.next()) {
-    			int id = resSet.getInt("clientId");
-    			String name = resSet.getString("name");
-    			System.out.println("clientId: " + id);
+    			int id = resSet.getInt("id");
+    			 name = resSet.getString("name");
+    			String password = resSet.getString("password");
+    			int clientId = resSet.getInt("clientId");
+    			int money = resSet.getInt("money");
+    			int cardNumber = resSet.getInt("cardNumber");
+    			System.out.println("Id: " + id);
     			System.out.println("Name: " + name);
+    			System.out.println("password: " + password);
+    			System.out.println("clientId: " + clientId);
+    			System.out.println("money: " + money);
+    			System.out.println("cardNumber: " + cardNumber);
     			System.out.println("");
+    			
     		}
     		resSet.close();
     		statement.close();
-    	} catch(Exception e) {
-    		e.printStackTrace();
-    	}
-    	System.out.println("Operation done successfully");
-		return true;
-	}
+    		if (aName.equals(name)) {
+    			System.out.println("OK");
+    			return true;
+			} else {
+    			System.out.println("Not");
+    			return false;
+			}
+    }
 	
 	public void removeFromDatastore(int id) {
 		PreparedStatement statement = null;
