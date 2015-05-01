@@ -258,4 +258,10 @@ public class Client {
 	public int addMoney(int moneyToAdd) {
 		return (moneyToAdd+moneyOnBanlAccount);
 	}
+
+	@Override
+	public String toString() {
+		return "Client [name=" + name + ", id=" + id + ", password=" + password
+				+ ", moneyOnBanlAccount=" + moneyOnBanlAccount + "]";
+	}
 }
