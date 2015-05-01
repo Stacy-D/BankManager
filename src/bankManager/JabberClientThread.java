@@ -35,7 +35,8 @@ public class JabberClientThread extends Thread {
 	   //main action here
 	   BankBranch.main(null);
 	   System.out.println("I'm here");
-	   addClient(null,null,0,"hj");
+	   //addClient(null,null,0,"hj");
+	   getInfo("fad","few","efw");
 	   os.println("END_OF_SESSION");
 	   os.flush();
          try {
@@ -51,30 +52,95 @@ public class JabberClientThread extends Thread {
 	   os.println("Addclient"+"NM"+firstName+" "+ lastName + "ID"+id+"PASS"+pass);
 	   os.flush();   
 	   try {
-		   
-		System.out.println(in.readLine());
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
+		   while(true){
+				String resp =in.readLine();
+				if(resp.startsWith("RESP"))
+				{
+					//TODO
+					// client was added ->notify
+					break;
+				}
+				if(resp.startsWith("REJECTED"))
+				{
+					// notify that there was a problem with addition
+					break;
+				}
+		   }}
+	 catch (IOException e) {
 		e.printStackTrace();
 	}
    }
    public void getInfo(String lastName, String firstName, String password)
    {
 	   String pass = EncryptPassword.encrypt(password);
-	   os.println("Getinfo"+"NM"+firstName+" "+ lastName + "PASS"+password);
+	   os.println("Getinfo"+"NM"+firstName+" "+ lastName + "PASS"+pass);
 	   os.flush();
+	   try {
+		   while(true){
+			String resp =in.readLine();
+			if(resp.startsWith("RESP"))
+			{
+				//TODO
+				// use the info from server here
+				break;
+			}
+			if(resp.startsWith("REJECTED"))
+			{
+				// notify that there was a problem with query
+				break;
+			}
+		   }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
    }
    public void addMoney(String lastName, String firstName, String password,int money)
    {
 	   String pass = EncryptPassword.encrypt(password);
-	   os.println("Addmoney"+"NM"+firstName+" "+ lastName + "PASS"+password+"ADD"+money);
+	   os.println("Addmoney"+"NM"+firstName+" "+ lastName + "PASS"+pass+"ADD"+money);
 	   os.flush();
+	   try {
+		   while(true){
+			String resp =in.readLine();
+			if(resp.startsWith("RESP"))
+			{
+				//TODO
+				// use the info from server here
+				break;
+			}
+			if(resp.startsWith("REJECTED"))
+			{
+				// notify that there was a problem with query
+				break;
+			}
+		   }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
    }
    public void withdrawMoney(String lastName, String firstName, String password,int withdraw)
    {
 	   String pass = EncryptPassword.encrypt(password);
-	   os.println("Withdraw"+"NM"+firstName+" "+ lastName + "PASS"+password+"MINUS"+withdraw);
+	   os.println("Withdraw"+"NM"+firstName+" "+ lastName + "PASS"+pass+"MINUS"+withdraw);
 	   os.flush();
+	   try {
+		   while(true){
+			String resp =in.readLine();
+			if(resp.startsWith("RESP"))
+			{
+				//TODO
+				// use the info from server here
+				break;
+			}
+			if(resp.startsWith("REJECTED"))
+			{
+				// notify that there was a problem with query
+				break;
+			}
+		   }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
    }
    private String stop = "End of session";
    private BufferedReader in;

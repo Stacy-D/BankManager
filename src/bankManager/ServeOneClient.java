@@ -49,8 +49,17 @@ public class ServeOneClient extends Thread{
 	 * Server accepts "get Info" call
 	 * @param currentLine
 	 */
-	private void getInfo(String currentLine) {
-		// TODO Auto-generated method stub
+	private void getInfo(String command) {
+		String name = command.substring(command.indexOf("NM")+2, command.indexOf("PASS"));
+		String password = command.substring(command.indexOf("PASS")+3);
+		// TODO
+		// Here use method to find cliend and his info
+		int balance = 0;
+		int limit = 0;
+		outStr.println("RESPBAL"+balance+"LIM"+limit);
+		//another possibility when not found (or password do not match) outStr.println("REJECTED");
+		outStr.flush();
+		
 		
 	}
 
@@ -58,8 +67,20 @@ public class ServeOneClient extends Thread{
 	 * Server accepts "add money" call
 	 * @param currentLine
 	 */
-	private void addMoney(String currentLine) {
-		// TODO Auto-generated method stub
+	private void addMoney(String command) {
+		String name = command.substring(command.indexOf("NM")+2, command.indexOf("PASS"));
+		String password = command.substring(command.indexOf("PASS")+3,command.indexOf("ADD"));
+		try{
+			int add = Integer.valueOf(command.indexOf("ADD")+3);
+			//TODO here add money to user account if it was found
+			outStr.println("RESPMoney added");
+			// or outStr.println("REJECTED");
+			outStr.flush();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		
 	}
 
@@ -67,8 +88,21 @@ public class ServeOneClient extends Thread{
 	 * Method to do withdraw action
 	 * @param currentLine
 	 */
-	private void withdrawAction(String currentLine) {
-		// TODO Auto-generated method stub
+	private void withdrawAction(String command) {
+		String name = command.substring(command.indexOf("NM")+2, command.indexOf("PASS"));
+		String password = command.substring(command.indexOf("PASS")+3,command.indexOf("MINUS"));
+		try{
+			int add = Integer.valueOf(command.indexOf("MINUS")+5);
+			//TODO here add money to user account if it was found
+			outStr.println("RESPMoney withdraw");
+			// or outStr.println("REJECTED");
+			outStr.flush();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
 		
 	}
 
@@ -77,8 +111,11 @@ public class ServeOneClient extends Thread{
 	String id = command.substring(command.indexOf("ID")+2, command.indexOf("PASS"));
 	String password = command.substring(command.indexOf("PASS")+3);
 	int money = 0;
+	// TODO
+	// replace this with addition to database
 	System.out.println(new Client(name,id,password,money).toString());
-	outStr.println("Client added");
+	// info about successful action
+	outStr.println("RESPClient added");
 	outStr.flush();
 	}
 
