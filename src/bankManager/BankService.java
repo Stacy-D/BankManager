@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 
+
 /**
  * @author natalia
  *
@@ -20,15 +21,13 @@ import java.util.Properties;
 public class BankService {
 	
 	private static Connection connection;
+	private static final int MAX_LIMIT = 15000;
+
 	
 	BankService() {
 		
 	}
 	
-	/* TODO
-	 * This part of code needs to be moved to another class
-	 *
-	 */
 	public static void createDatastore() {
 		 try {
 	            Class.forName("org.sqlite.JDBC");
@@ -137,23 +136,25 @@ public class BankService {
 	    }
 	
 	
-	public void removeFromDatastore(int id) {
+	 /**
+	  * close client deposit in a bank
+	  * @param id
+	  * @param aClient
+	  * @throws SQLException
+	  */
+	 
+	public boolean removeFromDatastore(int id, Client aClient) throws SQLException {
 		PreparedStatement statement = null;
-    	try {
+		int clientMoney = aClient.getMoneyOnBanlAccount();
+		if (clientMoney <= MAX_LIMIT) {
     		statement = connection.prepareStatement("DELETE FROM Bank WHERE id = ?");
     		statement.setInt(1, id);
     		statement.executeUpdate();
+    		clientMoney = 0;
     		System.out.println("The client with id " + id + " was deleted");
-    	} catch (SQLException e) {
-    		e.printStackTrace();
-    	} finally {
-    		if (statement != null) {
-    			try {
-    				statement.close();
-    			} catch (SQLException e) {
-    				e.printStackTrace();
-    			}
-    		}
-    	}
-	}
+    		statement.close();
+    		return true;
+    	} 
+		return false;
+    }
 }
