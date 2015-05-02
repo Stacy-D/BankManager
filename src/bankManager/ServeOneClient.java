@@ -119,6 +119,7 @@ public class ServeOneClient extends Thread{
 	System.out.println(new Client(name,id,password,money).toString());
 	// info about successful action
 	Client temp = new Client(name,id,password,money);
+	BankService.addClientToDatastore(temp);
 	outStr.println("RESPAddclientRESOKCARD0000111122220000");
 	outStr.flush();
 	}

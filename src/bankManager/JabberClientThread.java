@@ -10,7 +10,6 @@ import java.io.*;
 import javax.swing.*;
 
 import panels.Clients;
-import panels.InfoPanel;
 public class JabberClientThread  {
 	private static final Logger LOG = Logger.getLogger(JabberClientThread.class.getName());
 	public static void startBankAccess(InetAddress addr, int port)
@@ -111,24 +110,6 @@ public class JabberClientThread  {
 		{
 			os.println(command);
 			os.flush();
-		/*	try {
-				while(true){
-					String resp =in.readLine();
-					if(resp.startsWith("RESP"))
-					{
-						//TODO
-						// use the info from server here
-						break;
-					}
-					if(resp.startsWith("REJECTED"))
-					{
-						// notify that there was a problem with query
-						break;
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}*/
 		}
 		
 		private BufferedReader in;
@@ -527,7 +508,7 @@ public class JabberClientThread  {
 				}
 				withdrawPnl1 = new WithdrawPnl(access,pass, lastName,firstName);
 				addMoneyPanel2 = new AddMoneyPanel(access,pass, lastName,firstName);
-				infoPanel1 = new InfoPanel(access,pass, lastName,firstName);
+				infoPanel1 = new InfoPanel(access);
 				jTabbedPane1.addTab("Withdraw", withdrawPnl1);
 			    jTabbedPane1.addTab("Add", addMoneyPanel2);
 		        jTabbedPane1.addTab("Info", infoPanel1);
@@ -851,23 +832,18 @@ public class JabberClientThread  {
 				}});	
 		}
 	}
-
-
-/**
- *
- * @author Stacy
- */
+	/**
+	 *
+	 * @author Stacy
+	 */
 	static class InfoPanel extends javax.swing.JPanel implements Observer {
 
     /**
      * Creates new form InfoPanel
      */
-    public InfoPanel(BankAccess bank, String pass, String lN, String fN) {
+    public InfoPanel(BankAccess bank) {
     	this.access = bank;
     	this.access.addObserver(this);
-    	this.lastName = lN;
-    	this.firstName = fN;
-    	this.passw = pass;
         initComponents();
     }
 
@@ -882,8 +858,8 @@ public class JabberClientThread  {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        balanceText = new javax.swing.JLabel();
+        limitText = new javax.swing.JLabel();
 
         jLabel1.setFont(new java.awt.Font("Luminari", 1, 14)); // NOI18N
         jLabel1.setText("Balance");
@@ -891,9 +867,9 @@ public class JabberClientThread  {
         jLabel2.setFont(new java.awt.Font("Luminari", 1, 14)); // NOI18N
         jLabel2.setText("Limit");
 
-        jLabel3.setText("1,0000000000000");
+        balanceText.setText("1,0000000000000");
 
-        jLabel4.setText("1,0000000000000");
+        limitText.setText("1,0000000000000");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -905,11 +881,11 @@ public class JabberClientThread  {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(limitText, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(balanceText, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(28, 28, 28))
         );
         layout.setVerticalGroup(
@@ -918,29 +894,41 @@ public class JabberClientThread  {
                 .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(balanceText, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(limitText, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private String lastName;
-    private String firstName;
-    private String passw;
     private BankAccess access;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel balanceText;
+    private javax.swing.JLabel limitText;
     // End of variables declaration//GEN-END:variables
 	@Override
 	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
+		final String finalArg = arg.toString();
+		SwingUtilities.invokeLater(new Runnable(){
+
+			@Override
+			public void run() {
+				if(finalArg != null)
+				{
+					if(finalArg.toString().startsWith("RESPGetinfo"))
+					{
+						if(finalArg.toString().contains("OK"))
+						{
+							balanceText.setText(finalArg.substring(finalArg.indexOf("BAL")+3, finalArg.indexOf("LIM")));
+							limitText.setText(finalArg.substring(finalArg.indexOf("LIM")+3));
+						}
+					}
+				}
+			}});
 		
 	}
 }

@@ -18,6 +18,7 @@ public class BankServer {
 			ServerSocket s = new ServerSocket(Integer.valueOf(port));
 			System.out.println("Bank server in action."); 
 			try{
+				BankService.createDatastore();
 				while (true){
 					Socket socket = s.accept();
 					try{
