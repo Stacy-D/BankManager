@@ -77,19 +77,23 @@ public class BankService {
 	}
 	
 
-	 public static int getInfo(String nameSearch, String pass) throws SQLException
+	 public static String getInfo(String nameSearch, String pass) throws SQLException
 	 {
 		 Statement statement = connection.createStatement();
 		 int money = 0;
+		 int limit = 0;
+		 boolean find = false;
 		ResultSet resSet = statement.executeQuery("SELECT * FROM Bank;");
 		while (resSet.next()) {
 			if(nameSearch.equals(resSet.getString("name")) && pass.equals(resSet.getString("password"))){
 			money = resSet.getInt("money");
+			limit = resSet.getInt("limit");
+			find = true;
 			break;
 			}
 		}
-		System.out.println(money);
-		return money;
+		if(find) return "OKBAL"+money+"LIM"+limit;
+		return "F";
 		 
 	 }
 	

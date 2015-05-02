@@ -58,15 +58,12 @@ public class ServeOneClient extends Thread{
 		String password = command.substring(command.indexOf("PASS")+3);
 		// TODO
 		// Here use method to find cliend and his info
-		int balance = 0;
 		try {
-			balance = BankService.getInfo(name, password);
+			outStr.println("RESPGetinfoRES"+BankService.getInfo(name, password));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		int limit = 0;
-		outStr.println("RESPGetinfoRESOKBAL"+balance+"LIM"+limit);
 		//another possibility when not found (or password do not match) outStr.println("REJECTED");
 		outStr.flush();
 		
