@@ -9,7 +9,6 @@ import java.io.*;
 
 import javax.swing.*;
 
-import panels.Clients;
 public class JabberClientThread  {
 	private static final Logger LOG = Logger.getLogger(JabberClientThread.class.getName());
 	public static void startBankAccess(InetAddress addr, int port)
@@ -91,6 +90,11 @@ public class JabberClientThread  {
 			String pass = EncryptPassword.encrypt(password);
 			send("Withdraw"+"NM"+firstName+" "+ lastName + "PASS"+pass+"MINUS"+withdraw);
 		}
+		public void removeClient(String lastName, String firstName, String password)
+		{
+			String pass = EncryptPassword.encrypt(password);
+			send("Removeclient"+"NM"+firstName+" "+ lastName + "PASS"+pass);
+		}
 		public void stopCommunication()
 		{
 			os.println("END_OF_SESSION");
@@ -145,7 +149,6 @@ public class JabberClientThread  {
 	        jTabbedPane1 = new JTabbedPane();
 	        addClient = new AddClient(bankAccess);
 	        specificClient1 = new SpecificClient(bankAccess);
-	        clients1 = new Clients();
 	        exitButton = new JButton();
 	        jMenuBar1 = new JMenuBar();
 	        jMenu1 = new JMenu();
@@ -162,7 +165,6 @@ public class JabberClientThread  {
 
 	        jTabbedPane1.addTab("Add client", addClient);
 	        jTabbedPane1.addTab("Client Profile", specificClient1);
-	        jTabbedPane1.addTab("tab3", clients1);
 
 	        exitButton.setText("Exit");
 
@@ -238,7 +240,6 @@ public class JabberClientThread  {
 	    // Variables declaration - do not modify//GEN-BEGIN:variables
 	    private BankAccess bankAccess;
 	    private AddClient addClient;
-	    private Clients clients1;
 	    private JButton exitButton;
 	    private JLabel jLabel1;
 	    private JMenu jMenu1;
@@ -479,7 +480,7 @@ public class JabberClientThread  {
 	        jLabel5 = new JLabel();
 	        passField = new JTextField();
 	        jButton1 = new JButton();
-	        jButton2 = new JButton();
+	        removeButto = new JButton();
 	        jTabbedPane1 = new JTabbedPane();
 	        jLabel1.setFont(new java.awt.Font("Malayalam MN", 3, 18)); // NOI18N
 	        jLabel1.setText("Client Profile");
@@ -516,7 +517,22 @@ public class JabberClientThread  {
 				access.getInfo(lastName, firstName, pass);	
 				}});
 
-	        jButton2.setText("Update");
+	        removeButto.setText("Remove");
+	        removeButto.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String firstName =  firstNField.getText();
+					String lastName = lastNField.getText();
+					String pass = passField.getText();
+					if(firstName.equals("")||lastName.equals("")||pass.equals(""))
+					{
+						JOptionPane.showMessageDialog(null, "Some fields are empty");
+						return;
+					}
+					access.removeClient(lastName, firstName, pass);
+					
+				}});
 	        
 	        GroupLayout layout = new GroupLayout(this);
 	        this.setLayout(layout);
@@ -529,7 +545,7 @@ public class JabberClientThread  {
 	                        .addComponent(jLabel5, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
 	                        .addGap(0, 341, Short.MAX_VALUE))
 	                    .addGroup(layout.createSequentialGroup()
-	                        .addComponent(jButton2, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
+	                        .addComponent(removeButto, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
 	                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                        .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 129, GroupLayout.PREFERRED_SIZE))
 	                    .addGroup(layout.createSequentialGroup()
@@ -554,7 +570,7 @@ public class JabberClientThread  {
 	                .addContainerGap()
 	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 	                    .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
-	                    .addComponent(jButton2, GroupLayout.PREFERRED_SIZE, 37, GroupLayout.PREFERRED_SIZE))
+	                    .addComponent(removeButto, GroupLayout.PREFERRED_SIZE, 37, GroupLayout.PREFERRED_SIZE))
 	                .addGap(24, 24, 24)
 	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 	                    .addComponent(jLabel2, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
@@ -581,7 +597,7 @@ public class JabberClientThread  {
 	    private JTextField firstNField;
 	    private InfoPanel infoPanel1;
 	    private JButton jButton1;
-	    private JButton jButton2;
+	    private JButton removeButto;
 	    private JLabel jLabel1;
 	    private JLabel jLabel2;
 	    private JLabel jLabel3;
@@ -593,19 +609,23 @@ public class JabberClientThread  {
 	    // End of variables declaration//GEN-END:variables
 		@Override
 		public void update(Observable o, Object arg) {
-			final Object finalArg = arg;
+			final String finalArg = arg.toString();
 			SwingUtilities.invokeLater(new Runnable(){
 
 				@Override
 				public void run() {
 					if(finalArg != null)
 					{
-						if(finalArg.toString().startsWith("RESPGetinfo"))
+						if(finalArg.startsWith("RESPGetinfo"))
 						{
-							if(finalArg.toString().contains("OK"))
+							if(finalArg.contains("OK"))
 							{
 								jTabbedPane1.setVisible(true);
 								
+							}
+							if(finalArg.contains("F"))
+							{
+								JOptionPane.showMessageDialog(null, "Something went wrong");
 							}
 						}
 					}

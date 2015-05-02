@@ -33,6 +33,7 @@ public class ServeOneClient extends Thread{
 			if(currentLine.startsWith("Withdraw")) withdrawAction(currentLine);
 			if(currentLine.startsWith("Addmoney")) addMoney(currentLine);
 			if(currentLine.startsWith("Getinfo")) getInfo(currentLine);
+			if(currentLine.startsWith("Removeclient")) removeClient(currentLine);
 			}
 		}
 		}
@@ -49,6 +50,12 @@ public class ServeOneClient extends Thread{
 			}
 		}
 	}
+	private void removeClient(String command) {
+		String name = command.substring(command.indexOf("NM")+2, command.indexOf("PASS"));
+		String password = command.substring(command.indexOf("PASS")+3);
+		// here call method to remove client TODO
+	}
+
 	/**
 	 * Server accepts "get Info" call
 	 * @param currentLine
