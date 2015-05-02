@@ -9,7 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Properties;
+
 
 /**
  * @author natalia
@@ -46,7 +48,7 @@ public class BankService {
 	}
 	
 	public void addClientToDatastore(Client aClient) {
-		if (aClient != null && !isClientInDatastore()) {
+		if (aClient != null ) {
 			try{
 	        	String name = aClient.getName();
 	        	String password = aClient.getPassword();
@@ -65,7 +67,7 @@ public class BankService {
 
 	            statement.close();
 	        	System.out.println("Operation done successfully");
-
+	        	
 	        }catch (SQLException e) {
 	            System.out.println("Wrong SQL");
 	            e.printStackTrace();
@@ -73,37 +75,59 @@ public class BankService {
 		}
 	}
 	
-	public boolean selectFrom(String aName) throws SQLException {
-    	Statement statement = null;
-    	String name  = null;
-    		statement = connection.createStatement();
-    		ResultSet resSet = statement.executeQuery("SELECT * FROM Bank;");
-    		while (resSet.next()) {
-    			int id = resSet.getInt("id");
-    			 name = resSet.getString("name");
-    			String password = resSet.getString("password");
-    			int clientId = resSet.getInt("clientId");
-    			int money = resSet.getInt("money");
-    			int cardNumber = resSet.getInt("cardNumber");
-    			System.out.println("Id: " + id);
-    			System.out.println("Name: " + name);
-    			System.out.println("password: " + password);
-    			System.out.println("clientId: " + clientId);
-    			System.out.println("money: " + money);
-    			System.out.println("cardNumber: " + cardNumber);
-    			System.out.println("");
-    			
-    		}
-    		resSet.close();
-    		statement.close();
-    		if (aName.equals(name)) {
-    			System.out.println("OK");
-    			return true;
-			} else {
-    			System.out.println("Not");
-    			return false;
-			}
-    }
+
+	
+	
+	 public boolean findByName(String aName) throws SQLException {
+	    	Statement statement = null;
+	    	String name  = null;
+	    	ArrayList<String> nameList = new ArrayList<String>();
+	    		statement = connection.createStatement();
+	    		ResultSet resSet = statement.executeQuery("SELECT * FROM Bank;");
+	    		while (resSet.next()) {
+	    			int id = resSet.getInt("id");
+	    			 name = resSet.getString("name");
+	    			String password = resSet.getString("password");
+	    			int clientId = resSet.getInt("clientId");
+	    			int money = resSet.getInt("money");
+	    			int cardNumber = resSet.getInt("cardNumber");
+	    			nameList.add(name);
+	    		}
+	    		resSet.close();
+	    		statement.close();
+	    		for(int i = 0; i < nameList.size(); i++) {
+	    			if (nameList.get(i).equals(aName)) {
+	    				return true;
+	    			} 
+	    		}
+	    		return false;
+	    }
+	    
+	 
+	 public boolean findByCardNumber(int aCardNumber) throws SQLException {
+		 Statement statement = null;
+	    	int cardNumber  = 0;
+	    	ArrayList<Integer> cardNumberList = new ArrayList<Integer>();
+	    		statement = connection.createStatement();
+	    		ResultSet resSet = statement.executeQuery("SELECT * FROM Bank;");
+	    		while (resSet.next()) {
+	    			int id = resSet.getInt("id");
+	    			String name = resSet.getString("name");
+	    			String password = resSet.getString("password");
+	    			int clientId = resSet.getInt("clientId");
+	    			int money = resSet.getInt("money");
+	    			 cardNumber = resSet.getInt("cardNumber");
+	    			 cardNumberList.add(cardNumber);
+	    		}
+	    		resSet.close();
+	    		statement.close();
+	    		for (int i = 0; i < cardNumberList.size(); i++) {
+	    			if (cardNumberList.get(i) == aCardNumber) {
+		    			return true;
+	    			} 
+	    		}
+				return false; 
+	    }
 	
 	public void removeFromDatastore(int id) {
 		PreparedStatement statement = null;
@@ -124,8 +148,4 @@ public class BankService {
     		}
     	}
 	}
-	
-	
-	
-	
 }
