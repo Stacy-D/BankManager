@@ -19,7 +19,7 @@ import java.util.Properties;
  */
 public class BankService {
 	
-	private Connection connection;
+	private static Connection connection;
 	
 	BankService() {
 		
@@ -29,11 +29,11 @@ public class BankService {
 	 * This part of code needs to be moved to another class
 	 *
 	 */
-	public void createDatastore() {
+	public static void createDatastore() {
 		 try {
 	            Class.forName("org.sqlite.JDBC");
 	            connection = DriverManager.getConnection("jdbc:sqlite: Bank");
-	            PreparedStatement st = connection.prepareStatement("create table if not exists 'Bank' ('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'name' text, 'clientId' INTEGER,'password' INTEGER, 'money' INTEGER,'cardNumber' INTEGER);");
+	            PreparedStatement st = connection.prepareStatement("create table if not exists 'Bank' ('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'name' text, 'clientId' text,'password' text, 'money' INTEGER,'cardNumber' INTEGER);");
 	            int result = st.executeUpdate();
 	        	System.out.println("Operation done successfully");
 
@@ -47,7 +47,7 @@ public class BankService {
 	        }    
 	}
 	
-	public void addClientToDatastore(Client aClient) {
+	public static void addClientToDatastore(Client aClient) {
 		if (aClient != null ) {
 			try{
 	        	String name = aClient.getName();
@@ -78,7 +78,7 @@ public class BankService {
 
 	
 	
-	 public boolean findByName(String aName, String aPassword) throws SQLException {
+	 public static boolean findByName(String aName, String aPassword) throws SQLException {
 	    	Statement statement = null;
 	    	String name  = null;
 	    	ArrayList<String> nameList = new ArrayList<String>();

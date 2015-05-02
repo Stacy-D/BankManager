@@ -21,9 +21,6 @@ public class ServeOneClient extends Thread{
 	
 	public void run(){
 		try{
-			outStr.println("Hello, I`m the bank server");
-			System.out.println("Here in serve");
-			outStr.flush();
 		while(true)
 		{
 			String currentLine = inRead.readLine();

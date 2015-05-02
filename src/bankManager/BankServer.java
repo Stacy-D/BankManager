@@ -18,13 +18,10 @@ public class BankServer {
 			ServerSocket s = new ServerSocket(Integer.valueOf(port));
 			System.out.println("Bank server in action."); 
 			try{
-				int i = 0;
 				while (true){
 					Socket socket = s.accept();
 					try{
 						new ServeOneClient(socket);
-						System.out.println("Here"+i);
-						i++;
 					}catch (IOException e){
 						socket.close();
 					}
