@@ -21,15 +21,21 @@ public class ServeOneClient extends Thread{
 	
 	public void run(){
 		try{
+			outStr.println("Hello, I`m the bank server");
+			System.out.println("Here in serve");
+			outStr.flush();
 		while(true)
 		{
 			String currentLine = inRead.readLine();
-			if(currentLine.equals("END_OF_SESSION")) break;
+			System.out.println(currentLine);
+			if(currentLine!=null){
+			if(currentLine.equals("END_OF_SESSION")){ 
+				break;}
 			if(currentLine.startsWith("Addclient")) addClient(currentLine);
 			if(currentLine.startsWith("Withdraw")) withdrawAction(currentLine);
 			if(currentLine.startsWith("Addmoney")) addMoney(currentLine);
 			if(currentLine.startsWith("Getinfo")) getInfo(currentLine);
-		
+			}
 		}
 		}
 		catch(IOException ex)
@@ -56,7 +62,7 @@ public class ServeOneClient extends Thread{
 		// Here use method to find cliend and his info
 		int balance = 0;
 		int limit = 0;
-		outStr.println("RESPBAL"+balance+"LIM"+limit);
+		outStr.println("RESPGetinfoRESOKBAL"+balance+"LIM"+limit);
 		//another possibility when not found (or password do not match) outStr.println("REJECTED");
 		outStr.flush();
 		
@@ -73,7 +79,7 @@ public class ServeOneClient extends Thread{
 		try{
 			int add = Integer.valueOf(command.indexOf("ADD")+3);
 			//TODO here add money to user account if it was found
-			outStr.println("RESPMoney added");
+			outStr.println("RESPAddmoneyRESOK");
 			// or outStr.println("REJECTED");
 			outStr.flush();
 		}
@@ -94,7 +100,7 @@ public class ServeOneClient extends Thread{
 		try{
 			int add = Integer.valueOf(command.indexOf("MINUS")+5);
 			//TODO here add money to user account if it was found
-			outStr.println("RESPMoney withdraw");
+			outStr.println("RESPWithdrawRESOK");
 			// or outStr.println("REJECTED");
 			outStr.flush();
 		}
@@ -115,7 +121,8 @@ public class ServeOneClient extends Thread{
 	// replace this with addition to database
 	System.out.println(new Client(name,id,password,money).toString());
 	// info about successful action
-	outStr.println("RESPClient added");
+	Client temp = new Client(name,id,password,money);
+	outStr.println("RESPAddclientRESOKCARD0000111122220000");
 	outStr.flush();
 	}
 

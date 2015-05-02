@@ -122,7 +122,7 @@ public class Main extends javax.swing.JFrame {
      	   int port = Integer.valueOf(fieldPortClient.getText());
      	   JOptionPane.showMessageDialog(null, "Trying accessing server at port "+port);
      	  InetAddress addr = InetAddress.getByName(null);
-     	  new JabberClientThread(addr,port);
+     	  JabberClientThread.startBankAccess(addr, port);
      	   this.dispose();
 
         }

@@ -10,15 +10,21 @@ import java.net.Socket;
  *
  */
 public class BankServer {
+	private static int currentCardNumber = 0000;
+	private static final String FIRPRTCARD = "1111 2222 3333 ";
+	
 		
 		public static void startServer(int port) throws IOException{
 			ServerSocket s = new ServerSocket(Integer.valueOf(port));
 			System.out.println("Bank server in action."); 
 			try{
+				int i = 0;
 				while (true){
 					Socket socket = s.accept();
 					try{
 						new ServeOneClient(socket);
+						System.out.println("Here"+i);
+						i++;
 					}catch (IOException e){
 						socket.close();
 					}
@@ -27,5 +33,23 @@ public class BankServer {
 				s.close();
 			}
 		}
+
+		public static int getNextCard()
+		{
+			currentCardNumber++;
+			return currentCardNumber;
+		}
+		public static String currentCartNumber()
+		{
+			String current = String.valueOf(currentCardNumber);
+			if(current.length()!=4)
+			{
+				if(current.length() == 1) current = "000"+current;
+				else if (current.length() == 2) current = "00"+ current;
+				else current = "0"+current;
+			}
+			return FIRPRTCARD+current;
+		}
+		
 	}
 

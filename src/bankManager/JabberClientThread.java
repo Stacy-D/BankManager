@@ -1,152 +1,462 @@
 package bankManager;
 
 import java.net.*;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.logging.Logger;
+import java.awt.event.*;
 import java.io.*;
 
-import panels.BankBranch;
+import javax.swing.*;
+import panels.Clients;
+import panels.SpecificClient;
 
-public class JabberClientThread extends Thread {
+public class JabberClientThread  {
 	private static final Logger LOG = Logger.getLogger(JabberClientThread.class.getName());
-      
-   public JabberClientThread(InetAddress addr, int port) {
-      threadcount++;
-      try {
-         socket = new Socket(addr,port); 
-         os = new PrintStream(socket.getOutputStream());
-         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-         start();
-         }
-      catch (IOException e) {
-         try {
-            socket.close();
-         }
-         catch (IOException e2) {
-            LOG.warning("Socket wasn`t closed");
-         }
-      }
-   }
-   
-   public static int threadCount() {
-	      return threadcount;
-   }
-	   
-   public void run() {
-	   //main action here
-	   BankBranch.main(null);
-	   System.out.println("I'm here");
-	   //addClient(null,null,0,"hj");
-	   getInfo("fad","few","efw");
-	   os.println("END_OF_SESSION");
-	   os.flush();
-         try {
-            socket.close();
-         }
-         catch (IOException e) {
-             LOG.warning("Socket wasn`t closed");
-         }
-      }
-   public void addClient(String firstName, String lastName, int id, String password)
-   {
-	   String pass = EncryptPassword.encrypt(password);
-	   os.println("Addclient"+"NM"+firstName+" "+ lastName + "ID"+id+"PASS"+pass);
-	   os.flush();   
-	   try {
-		   while(true){
-				String resp =in.readLine();
-				if(resp.startsWith("RESP"))
-				{
-					//TODO
-					// client was added ->notify
-					break;
-				}
-				if(resp.startsWith("REJECTED"))
-				{
-					// notify that there was a problem with addition
-					break;
-				}
-		   }}
-	 catch (IOException e) {
-		e.printStackTrace();
+	public static void startBankAccess(InetAddress addr, int port)
+	{
+		BankAccess access = new BankAccess(addr, port);
+		JFrame frame = new BankBranch(access);
+		frame.setTitle("Connected to BankManager at port: "+port);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setResizable(false);
+		frame.setVisible(true);
+		
 	}
-   }
-   public void getInfo(String lastName, String firstName, String password)
-   {
-	   String pass = EncryptPassword.encrypt(password);
-	   os.println("Getinfo"+"NM"+firstName+" "+ lastName + "PASS"+pass);
-	   os.flush();
-	   try {
-		   while(true){
-			String resp =in.readLine();
-			if(resp.startsWith("RESP"))
-			{
-				//TODO
-				// use the info from server here
-				break;
-			}
-			if(resp.startsWith("REJECTED"))
-			{
-				// notify that there was a problem with query
-				break;
-			}
-		   }
-		} catch (IOException e) {
-			e.printStackTrace();
+
+	
+	
+	static class BankAccess extends Observable{
+		public BankAccess(InetAddress addr, int port)
+		{
+			try {
+		         socket = new Socket(addr,port); 
+		         os = new PrintStream(socket.getOutputStream());
+		         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		         Thread receivingThread = new Thread(){
+		        	 @Override
+		        	 public void run()
+		        	 {
+		        		 try
+		        		 {
+		        			 String line;
+		        			 while((line = in.readLine()) != null){
+		        				 notifyObservers(line);
+		        			 }
+
+		        		 }
+		        		 catch(IOException ex)
+		        		 {
+		        			 notifyObservers(ex);
+		        		 }
+		        	 }
+		         };
+		         receivingThread.start();
+		         }
+		      catch (IOException e) {
+		         try {
+		            socket.close();
+		         }
+		         catch (IOException e2) {
+		            LOG.warning("Socket wasn`t closed");
+		         }
+		      }
 		}
-   }
-   public void addMoney(String lastName, String firstName, String password,int money)
-   {
-	   String pass = EncryptPassword.encrypt(password);
-	   os.println("Addmoney"+"NM"+firstName+" "+ lastName + "PASS"+pass+"ADD"+money);
-	   os.flush();
-	   try {
-		   while(true){
-			String resp =in.readLine();
-			if(resp.startsWith("RESP"))
-			{
-				//TODO
-				// use the info from server here
-				break;
-			}
-			if(resp.startsWith("REJECTED"))
-			{
-				// notify that there was a problem with query
-				break;
-			}
-		   }
-		} catch (IOException e) {
-			e.printStackTrace();
+		
+		@Override
+		public void notifyObservers(Object arg)
+		{
+			super.setChanged();
+			super.notifyObservers(arg);
 		}
-   }
-   public void withdrawMoney(String lastName, String firstName, String password,int withdraw)
-   {
-	   String pass = EncryptPassword.encrypt(password);
-	   os.println("Withdraw"+"NM"+firstName+" "+ lastName + "PASS"+pass+"MINUS"+withdraw);
-	   os.flush();
-	   try {
-		   while(true){
-			String resp =in.readLine();
-			if(resp.startsWith("RESP"))
-			{
-				//TODO
-				// use the info from server here
-				break;
-			}
-			if(resp.startsWith("REJECTED"))
-			{
-				// notify that there was a problem with query
-				break;
-			}
-		   }
-		} catch (IOException e) {
-			e.printStackTrace();
+		public void addClient(String firstName, String lastName, String id, String password)
+		{
+			String pass = EncryptPassword.encrypt(password);
+			send("Addclient"+"NM"+firstName+" "+ lastName + "ID"+id+"PASS"+pass);
+	
 		}
-   }
-   private String stop = "End of session";
-   private BufferedReader in;
-   private Socket socket;
-   private PrintStream os;
-   private static int counter = 0;
-   private int id = counter++;
-   private static int threadcount = 0;
+		public void getInfo(String lastName, String firstName, String password)
+		{
+			String pass = EncryptPassword.encrypt(password);
+			send("Getinfo"+"NM"+firstName+" "+ lastName + "PASS"+pass);
+		}
+		public void addMoney(String lastName, String firstName, String password,int money)
+		{
+	   		String pass = EncryptPassword.encrypt(password);
+	   		send("Addmoney"+"NM"+firstName+" "+ lastName + "PASS"+pass+"ADD"+money);
+		}
+		public void withdrawMoney(String lastName, String firstName, String password,int withdraw)
+		{
+			String pass = EncryptPassword.encrypt(password);
+			send("Withdraw"+"NM"+firstName+" "+ lastName + "PASS"+pass+"MINUS"+withdraw);
+		}
+		public void stopCommunication()
+		{
+			os.println("END_OF_SESSION");
+			os.flush();
+			try {
+				socket.close();
+			}
+			catch (IOException e) {
+				LOG.warning("Socket wasn`t closed");
+			}
+		}
+		/**
+		 * Send command to server and get it response
+		 * @param command
+		 */
+		public void send(String command)
+		{
+			os.println(command);
+			os.flush();
+		/*	try {
+				while(true){
+					String resp =in.readLine();
+					if(resp.startsWith("RESP"))
+					{
+						//TODO
+						// use the info from server here
+						break;
+					}
+					if(resp.startsWith("REJECTED"))
+					{
+						// notify that there was a problem with query
+						break;
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}*/
+		}
+		
+		private BufferedReader in;
+		private Socket socket;
+		private PrintStream os;
+	}
+	static class BankBranch extends javax.swing.JFrame implements Observer {
+
+	    /**
+	     * Creates new form BankBranch
+	     */
+	    public BankBranch(BankAccess access) {
+	    	this.bankAccess = access;
+	    	this.bankAccess.addObserver(this);
+	        initComponents();
+	    }
+
+	    /**
+	     * This method is called from within the constructor to initialize the form.
+	     * WARNING: Do NOT modify this code. The content of this method is always
+	     * regenerated by the Form Editor.
+	     */
+	    @SuppressWarnings("unchecked")
+	    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+	    private void initComponents() {
+
+	        jLabel1 = new javax.swing.JLabel();
+	        jTabbedPane1 = new javax.swing.JTabbedPane();
+	        addClient = new AddClient(bankAccess);
+	        specificClient1 = new SpecificClient();
+	        clients1 = new Clients();
+	        exitButton = new javax.swing.JButton();
+	        jMenuBar1 = new javax.swing.JMenuBar();
+	        jMenu1 = new javax.swing.JMenu();
+	        jMenuItem2 = new javax.swing.JMenuItem();
+	        jMenu2 = new javax.swing.JMenu();
+	        jMenuItem1 = new javax.swing.JMenuItem();
+	        jMenuItem3 = new javax.swing.JMenuItem();
+	        jMenuItem4 = new javax.swing.JMenuItem();
+
+	        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+	        jLabel1.setFont(new java.awt.Font("Apple Chancery", 3, 18)); // NOI18N
+	        jLabel1.setText("Main office");
+
+	        jTabbedPane1.addTab("Add client", addClient);
+	        jTabbedPane1.addTab("Client Profile", specificClient1);
+	        jTabbedPane1.addTab("tab3", clients1);
+
+	        exitButton.setText("Exit");
+
+	        jMenu1.setText("File");
+
+	        jMenuItem2.setText("Exit");
+	        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                jMenuItem2ActionPerformed(evt);
+	            }
+	        });
+	        jMenu1.add(jMenuItem2);
+
+	        jMenuBar1.add(jMenu1);
+
+	        jMenu2.setText("Clients");
+
+	        jMenuItem1.setText("Add client");
+	        jMenu2.add(jMenuItem1);
+
+	        jMenuItem3.setText("Show clients");
+	        jMenu2.add(jMenuItem3);
+
+	        jMenuItem4.setText("Operations");
+	        jMenu2.add(jMenuItem4);
+
+	        jMenuBar1.add(jMenu2);
+
+	        setJMenuBar(jMenuBar1);
+	        exitButton.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					bankAccess.stopCommunication();
+				dispose();
+				}});
+
+	        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+	        getContentPane().setLayout(layout);
+	        layout.setHorizontalGroup(
+	            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+	                .addContainerGap()
+	                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 501, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                .addGap(18, 18, 18)
+	                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(exitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                .addContainerGap())
+	        );
+	        layout.setVerticalGroup(
+	            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(layout.createSequentialGroup()
+	                .addContainerGap()
+	                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 262, Short.MAX_VALUE)
+	                .addComponent(exitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                .addGap(19, 19, 19))
+	            .addGroup(layout.createSequentialGroup()
+	                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+	                .addContainerGap())
+	        );
+
+	        pack();
+	    }// </editor-fold>//GEN-END:initComponents
+
+	    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+	        // TODO add your handling code here:
+	    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+	  
+
+	    // Variables declaration - do not modify//GEN-BEGIN:variables
+	    private BankAccess bankAccess;
+	    private AddClient addClient;
+	    private Clients clients1;
+	    private javax.swing.JButton exitButton;
+	    private javax.swing.JLabel jLabel1;
+	    private javax.swing.JMenu jMenu1;
+	    private javax.swing.JMenu jMenu2;
+	    private javax.swing.JMenuBar jMenuBar1;
+	    private javax.swing.JMenuItem jMenuItem1;
+	    private javax.swing.JMenuItem jMenuItem2;
+	    private javax.swing.JMenuItem jMenuItem3;
+	    private javax.swing.JMenuItem jMenuItem4;
+	    private javax.swing.JTabbedPane jTabbedPane1;
+	    private SpecificClient specificClient1;
+	    // End of variables declaration//GEN-END:variables
+		@Override
+		public void update(Observable o, Object arg) {
+			final Object finalArg = arg;
+			SwingUtilities.invokeLater(new Runnable(){
+
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(null, finalArg.toString());
+				}});		
+		}
+	}
+	static class AddClient extends JPanel implements Observer {
+
+	    /**
+	     * Creates new form AddClient
+	     */
+	    public AddClient(BankAccess access) {
+	    	this.access = access;
+	    	this.access.addObserver(this);
+	        initComponents();
+	        textCN.setVisible(false);
+	        cardNumber.setVisible(false);
+	    }
+
+	    /**
+	     * This method is called from within the constructor to initialize the form.
+	     * WARNING: Do NOT modify this code. The content of this method is always
+	     * regenerated by the Form Editor.
+	     */
+	    @SuppressWarnings("unchecked")
+	    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+	    private void initComponents() {
+
+	        jLabel1 = new JLabel();
+	        lastNField = new JTextField();
+	        firstNField = new JTextField();
+	        jLabel2 = new JLabel();
+	        jLabel3 = new JLabel();
+	        jLabel4 = new JLabel();
+	        ID = new JTextField();
+	        jLabel5 = new JLabel();
+	        password = new JTextField();
+	        registerButton = new JButton();
+	        textCN = new JLabel();
+	        cardNumber = new JLabel();
+
+	        jLabel1.setFont(new java.awt.Font("Lucida Sans Typewriter", 3, 14)); // NOI18N
+	        jLabel1.setText("Add Client");
+
+	        jLabel2.setText("First name");
+
+	        jLabel3.setText("Last name");
+
+	        jLabel4.setText("ID");
+
+	        jLabel5.setText("Password");
+
+	        registerButton.setText("Register");
+
+	        textCN.setText("Card number");
+
+	        cardNumber.setText("0000 0000 0000 0000");
+	        registerButton.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+				//TODO addition of a client
+					String firstName = firstNField.getText();
+					String lastName = lastNField.getText();
+					String id = ID.getText();
+					String pass = password.getText();
+					if(firstName.equals("")||lastName.equals("")||id.equals("")||pass.equals(""))
+					{
+						JOptionPane.showMessageDialog(null, "Some fields are empty");
+						return;
+					}
+					access.addClient(firstName, lastName, id, pass);
+					
+				
+				}});
+
+	        GroupLayout layout = new GroupLayout(this);
+	        this.setLayout(layout);
+	        layout.setHorizontalGroup(
+	            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	            .addGroup(layout.createSequentialGroup()
+	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	                    .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+	                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                        .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE))
+	                    .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+	                        .addGap(0, 0, Short.MAX_VALUE)
+	                        .addComponent(registerButton))
+	                    .addGroup(layout.createSequentialGroup()
+	                        .addGap(16, 16, 16)
+	                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	                            .addGroup(layout.createSequentialGroup()
+	                                .addComponent(jLabel5, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
+	                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                                .addComponent(password, GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE))
+	                            .addGroup(layout.createSequentialGroup()
+	                                .addComponent(jLabel4, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
+	                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                                .addComponent(ID, GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE))
+	                            .addGroup(layout.createSequentialGroup()
+	                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+	                                    .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                                    .addComponent(jLabel3, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE))
+	                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+	                                    .addComponent(firstNField)
+	                                    .addComponent(lastNField, GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)))
+	                            .addGroup(layout.createSequentialGroup()
+	                                .addComponent(textCN, GroupLayout.PREFERRED_SIZE, 91, GroupLayout.PREFERRED_SIZE)
+	                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                                .addComponent(cardNumber, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)
+	                                .addGap(0, 0, Short.MAX_VALUE)))))
+	                .addContainerGap())
+	        );
+	        layout.setVerticalGroup(
+	            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	            .addGroup(layout.createSequentialGroup()
+	                .addContainerGap()
+	                .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+	                    .addGroup(layout.createSequentialGroup()
+	                        .addComponent(jLabel2, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+	                        .addGap(15, 15, 15)
+	                        .addComponent(jLabel3))
+	                    .addGroup(layout.createSequentialGroup()
+	                        .addComponent(firstNField, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
+	                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                        .addComponent(lastNField, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)))
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+	                    .addComponent(jLabel4)
+	                    .addComponent(ID, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE))
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+	                    .addComponent(jLabel5)
+	                    .addComponent(password, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE))
+	                .addGap(18, 18, 18)
+	                .addComponent(registerButton)
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+	                    .addComponent(textCN, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(cardNumber, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+	                .addContainerGap(38, Short.MAX_VALUE))
+	        );
+	    }
+
+
+
+	    // Variables declaration - do not modify//GEN-BEGIN:variables
+	    private BankAccess access;
+	    private JTextField firstNField;
+	    private JButton registerButton;
+	    private JLabel jLabel1;
+	    private JLabel jLabel2;
+	    private JLabel jLabel3;
+	    private JLabel jLabel4;
+	    private JLabel jLabel5;
+	    private JLabel textCN;
+	    private JLabel cardNumber;
+	    private JTextField lastNField;
+	    private JTextField ID;
+	    private JTextField password;
+	    // End of variables declaration//GEN-END:variables
+		@Override
+		public void update(Observable o, Object arg) {
+			final Object finalArg = arg;
+			SwingUtilities.invokeLater(new Runnable(){
+
+				@Override
+				public void run() {
+					if(finalArg != null)
+					{
+						if(finalArg.toString().startsWith("RESPAddclient"))
+						{
+							if(finalArg.toString().contains("OK"))
+							{
+								textCN.setVisible(true);
+								cardNumber.setText(finalArg.toString().substring(finalArg.toString().indexOf("CARD")+4));
+								cardNumber.setVisible(true);
+								
+							}
+						}
+					}
+				}});
+			
+		}
+	}
+
 }
