@@ -478,6 +478,7 @@ public class JabberClientThread  {
 	    	this.access = bank;
 	    	this.access.addObserver(this);
 	        initComponents();
+	        this.jTabbedPane1.setVisible(false);
 	    }
 
 	    /**
@@ -495,14 +496,10 @@ public class JabberClientThread  {
 	        firstNField = new JTextField();
 	        lastNField = new JTextField();
 	        jLabel5 = new JLabel();
-	        lastNField1 = new JTextField();
+	        passField = new JTextField();
 	        jButton1 = new JButton();
 	        jButton2 = new JButton();
 	        jTabbedPane1 = new JTabbedPane();
-	        infoPanel1 = new InfoPanel();
-	        withdrawPnl1 = new WithdrawPnl(access);
-	        addMoneyPanel2 = new AddMoneyPanel(access);
-
 	        jLabel1.setFont(new java.awt.Font("Malayalam MN", 3, 18)); // NOI18N
 	        jLabel1.setText("Client Profile");
 
@@ -516,13 +513,29 @@ public class JabberClientThread  {
 	        jLabel5.setText("Password");
 
 	        jButton1.setText("Get info");
+	        jButton1.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+				String firstName =  firstNField.getText();
+				String lastName = lastNField.getText();
+				String pass = passField.getText();
+				if(firstName.equals("")||lastName.equals("")||pass.equals(""))
+				{
+					JOptionPane.showMessageDialog(null, "Some fields are empty");
+					return;
+				}
+				withdrawPnl1 = new WithdrawPnl(access,pass, lastName,firstName);
+				addMoneyPanel2 = new AddMoneyPanel(access,pass, lastName,firstName);
+				infoPanel1 = new InfoPanel(access,pass, lastName,firstName);
+				jTabbedPane1.addTab("Withdraw", withdrawPnl1);
+			    jTabbedPane1.addTab("Add", addMoneyPanel2);
+		        jTabbedPane1.addTab("Info", infoPanel1);
+				access.getInfo(lastName, firstName, pass);	
+				}});
 
 	        jButton2.setText("Update");
-
-	        jTabbedPane1.addTab("Info", infoPanel1);
-	        jTabbedPane1.addTab("Withdraw", withdrawPnl1);
-	        jTabbedPane1.addTab("Add", addMoneyPanel2);
-
+	        
 	        GroupLayout layout = new GroupLayout(this);
 	        this.setLayout(layout);
 	        layout.setHorizontalGroup(
@@ -548,7 +561,7 @@ public class JabberClientThread  {
 	                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
 	                                    .addComponent(lastNField, GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
 	                                    .addComponent(firstNField)
-	                                    .addComponent(lastNField1))
+	                                    .addComponent(passField))
 	                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                                .addComponent(jButton1)))))
 	                .addContainerGap())
@@ -572,7 +585,7 @@ public class JabberClientThread  {
 	                .addGap(18, 18, 18)
 	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	                    .addComponent(jLabel5)
-	                    .addComponent(lastNField1, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE))
+	                    .addComponent(passField, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE))
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 	                .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
 	                .addContainerGap())
@@ -593,12 +606,29 @@ public class JabberClientThread  {
 	    private JLabel jLabel5;
 	    private JTabbedPane jTabbedPane1;
 	    private JTextField lastNField;
-	    private JTextField lastNField1;
+	    private JTextField passField;
 	    private WithdrawPnl withdrawPnl1;
 	    // End of variables declaration//GEN-END:variables
 		@Override
 		public void update(Observable o, Object arg) {
-			// TODO Auto-generated method stub
+			final Object finalArg = arg;
+			SwingUtilities.invokeLater(new Runnable(){
+
+				@Override
+				public void run() {
+					if(finalArg != null)
+					{
+						if(finalArg.toString().startsWith("RESPGetinfo"))
+						{
+							if(finalArg.toString().contains("OK"))
+							{
+								jTabbedPane1.setVisible(true);
+								
+							}
+						}
+					}
+				}});
+			
 			
 		}
 	}
@@ -609,7 +639,10 @@ public class JabberClientThread  {
 	    /**
 	     * Creates new form WithdrawPnl
 	     */
-	    public WithdrawPnl(BankAccess bank) {
+	    public WithdrawPnl(BankAccess bank,String password, String lN,String fN) {
+	    	this.lastName = lN;
+	    	this.firstName = fN;
+	    	this.password = password;
 	    	this.access = bank;
 	    	this.access.addObserver(this);
 	        initComponents();
@@ -632,6 +665,23 @@ public class JabberClientThread  {
 
 	        withdrawButton.setFont(new java.awt.Font("Luminari", 2, 13)); // NOI18N
 	        withdrawButton.setText("Perform");
+	        withdrawButton.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					try
+					{
+						int moneySum = Integer.valueOf(withdrawField.getText());
+						if(moneySum == 0) return;
+						access.withdrawMoney(lastName, firstName, password, moneySum);
+						access.getInfo(lastName, firstName, password);
+					}
+					catch(Exception ex)
+					{
+						 JOptionPane.showMessageDialog(null, "Field must contain only numbers");
+					}	
+					
+				}});
 
 	        jLabel1.setFont(new java.awt.Font("Luminari", 1, 14)); // NOI18N
 	        jLabel1.setText("Withdraw    money");
@@ -665,6 +715,9 @@ public class JabberClientThread  {
 	        );
 	    }
 
+	    private String firstName;
+	    private String lastName;
+	    private String password;
 	    private JLabel jLabel1;
 	    private BankAccess access;
 	    private JButton withdrawButton;
@@ -672,8 +725,23 @@ public class JabberClientThread  {
 	    // End of variables declaration//GEN-END:variables
 		@Override
 		public void update(Observable o, Object arg) {
-			// TODO 
-			
+			final Object finalArg = arg;
+			SwingUtilities.invokeLater(new Runnable(){
+
+				@Override
+				public void run() {
+					if(finalArg != null)
+					{
+						if(finalArg.toString().startsWith("RESPWithdraw"))
+						{
+							if(finalArg.toString().contains("OK"))
+							{
+								JOptionPane.showMessageDialog(null, "Money was withdrawed from your account");
+								
+							}
+						}
+					}
+				}});
 		}
 	}
 
@@ -682,7 +750,10 @@ public class JabberClientThread  {
 	    /**
 	     * Creates new form AddMoneyPanel
 	     */
-	    public AddMoneyPanel(BankAccess bank) {
+	    public AddMoneyPanel(BankAccess bank,String password, String lN,String fN) {
+	    	this.lastName = lN;
+	    	this.firstName = fN;
+	    	this.password = password;
 	    	this.access = bank;
 	    	this.access.addObserver(this);
 	        initComponents();
@@ -707,6 +778,9 @@ public class JabberClientThread  {
 					try
 					{
 						int moneySum = Integer.valueOf(addMoneyField.getText());
+						if(moneySum == 0) return;
+						access.addMoney(lastName, firstName, password, moneySum);
+						access.getInfo(lastName, firstName, password);
 					}
 					catch(Exception ex)
 					{
@@ -716,12 +790,6 @@ public class JabberClientThread  {
 				}});
 	        jLabel1.setFont(new java.awt.Font("Luminari", 1, 14)); // NOI18N
 	        jLabel1.setText("Add money");
-
-	        addMoneyField.addActionListener(new java.awt.event.ActionListener() {
-	            public void actionPerformed(java.awt.event.ActionEvent evt) {
-	                addMoneyFieldActionPerformed(evt);
-	            }
-	        });
 
 	        addMoneyButton.setFont(new java.awt.Font("Luminari", 2, 13)); // NOI18N
 	        addMoneyButton.setText("Perform");
@@ -752,12 +820,11 @@ public class JabberClientThread  {
 	        );
 	    }// </editor-fold>//GEN-END:initComponents
 
-	    private void addMoneyFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addMoneyFieldActionPerformed
-	        // TODO add your handling code here:
-	    }//GEN-LAST:event_addMoneyFieldActionPerformed
-
-
 	    // Variables declaration - do not modify//GEN-BEGIN:variables
+	    private String firstName;
+	    private String lastName;
+	    private String password;
+	    // client info
 	    private BankAccess access;
 	    private JButton addMoneyButton;
 	    private JTextField addMoneyField;
@@ -765,10 +832,118 @@ public class JabberClientThread  {
 	    // End of variables declaration//GEN-END:variables
 		@Override
 		public void update(Observable o, Object arg) {
-			// TODO Auto-generated method stub
-			
+			final Object finalArg = arg;
+			SwingUtilities.invokeLater(new Runnable(){
+
+				@Override
+				public void run() {
+					if(finalArg != null)
+					{
+						if(finalArg.toString().startsWith("RESPAddmoney"))
+						{
+							if(finalArg.toString().contains("OK"))
+							{
+								JOptionPane.showMessageDialog(null, "Money was added to your account");
+								
+							}
+						}
+					}
+				}});	
 		}
 	}
+
+
+/**
+ *
+ * @author Stacy
+ */
+	static class InfoPanel extends javax.swing.JPanel implements Observer {
+
+    /**
+     * Creates new form InfoPanel
+     */
+    public InfoPanel(BankAccess bank, String pass, String lN, String fN) {
+    	this.access = bank;
+    	this.access.addObserver(this);
+    	this.lastName = lN;
+    	this.firstName = fN;
+    	this.passw = pass;
+        initComponents();
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+
+        jLabel1.setFont(new java.awt.Font("Luminari", 1, 14)); // NOI18N
+        jLabel1.setText("Balance");
+
+        jLabel2.setFont(new java.awt.Font("Luminari", 1, 14)); // NOI18N
+        jLabel2.setText("Limit");
+
+        jLabel3.setText("1,0000000000000");
+
+        jLabel4.setText("1,0000000000000");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(28, 28, 28))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(15, Short.MAX_VALUE))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private String lastName;
+    private String firstName;
+    private String passw;
+    private BankAccess access;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    // End of variables declaration//GEN-END:variables
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+}
 
 
 
