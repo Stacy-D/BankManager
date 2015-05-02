@@ -2,6 +2,7 @@ package bankManager;
 
 import java.io.*;
 import java.net.*;
+import java.sql.SQLException;
 
 public class ServeOneClient extends Thread{
 
@@ -58,6 +59,12 @@ public class ServeOneClient extends Thread{
 		// TODO
 		// Here use method to find cliend and his info
 		int balance = 0;
+		try {
+			balance = BankService.getInfo(name, password);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		int limit = 0;
 		outStr.println("RESPGetinfoRESOKBAL"+balance+"LIM"+limit);
 		//another possibility when not found (or password do not match) outStr.println("REJECTED");
@@ -76,6 +83,7 @@ public class ServeOneClient extends Thread{
 		try{
 			int add = Integer.valueOf(command.indexOf("ADD")+3);
 			//TODO here add money to user account if it was found
+		//	BankService.addMoneyByName(name, password, add);
 			outStr.println("RESPAddmoneyRESOK");
 			// or outStr.println("REJECTED");
 			outStr.flush();
@@ -113,13 +121,13 @@ public class ServeOneClient extends Thread{
 	String name = command.substring(command.indexOf("NM")+2, command.indexOf("ID"));
 	String id = command.substring(command.indexOf("ID")+2, command.indexOf("PASS"));
 	String password = command.substring(command.indexOf("PASS")+3);
-	int money = 0;
+	int money = 120;
 	// TODO
 	// replace this with addition to database
 	System.out.println(new Client(name,id,password,money).toString());
 	// info about successful action
 	Client temp = new Client(name,id,password,money);
-	BankService.addClientToDatastore(temp);
+	//BankService.addClientToDatastore(temp);
 	outStr.println("RESPAddclientRESOKCARD0000111122220000");
 	outStr.flush();
 	}

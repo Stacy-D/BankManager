@@ -506,12 +506,13 @@ public class JabberClientThread  {
 					JOptionPane.showMessageDialog(null, "Some fields are empty");
 					return;
 				}
+				if(withdrawPnl1 == null && addMoneyPanel2 == null && infoPanel1 == null){
 				withdrawPnl1 = new WithdrawPnl(access,pass, lastName,firstName);
 				addMoneyPanel2 = new AddMoneyPanel(access,pass, lastName,firstName);
 				infoPanel1 = new InfoPanel(access);
 				jTabbedPane1.addTab("Withdraw", withdrawPnl1);
 			    jTabbedPane1.addTab("Add", addMoneyPanel2);
-		        jTabbedPane1.addTab("Info", infoPanel1);
+		        jTabbedPane1.addTab("Info", infoPanel1);}
 				access.getInfo(lastName, firstName, pass);	
 				}});
 
