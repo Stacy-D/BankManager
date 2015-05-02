@@ -78,56 +78,64 @@ public class BankService {
 
 	
 	
-	 public boolean findByName(String aName) throws SQLException {
+	 public boolean findByName(String aName, String aPassword) throws SQLException {
 	    	Statement statement = null;
 	    	String name  = null;
 	    	ArrayList<String> nameList = new ArrayList<String>();
+	    	ArrayList<String> passwordList = new ArrayList<String>();
 	    		statement = connection.createStatement();
 	    		ResultSet resSet = statement.executeQuery("SELECT * FROM Bank;");
 	    		while (resSet.next()) {
-	    			int id = resSet.getInt("id");
 	    			 name = resSet.getString("name");
 	    			String password = resSet.getString("password");
-	    			int clientId = resSet.getInt("clientId");
-	    			int money = resSet.getInt("money");
-	    			int cardNumber = resSet.getInt("cardNumber");
 	    			nameList.add(name);
+	    			passwordList.add(password);
 	    		}
 	    		resSet.close();
 	    		statement.close();
 	    		for(int i = 0; i < nameList.size(); i++) {
-	    			if (nameList.get(i).equals(aName)) {
-	    				return true;
-	    			} 
+	    			for (int j = 0; j < passwordList.size(); j++) {
+	    				if (nameList.get(i).equals(aName) && passwordList.get(j).equals(aPassword)) {
+		    				System.out.println("OK");
+		    				return true;
+		    			} else {
+		    				System.out.println("Not");
+		    			}
+	    			}
+	    			
 	    		}
 	    		return false;
 	    }
 	    
 	 
-	 public boolean findByCardNumber(int aCardNumber) throws SQLException {
+	 public boolean findByCardNumber(int aCardNumber, String aPassword) throws SQLException {
 		 Statement statement = null;
 	    	int cardNumber  = 0;
 	    	ArrayList<Integer> cardNumberList = new ArrayList<Integer>();
+	    	ArrayList<String> passwordList = new ArrayList<String>();
 	    		statement = connection.createStatement();
 	    		ResultSet resSet = statement.executeQuery("SELECT * FROM Bank;");
 	    		while (resSet.next()) {
-	    			int id = resSet.getInt("id");
-	    			String name = resSet.getString("name");
 	    			String password = resSet.getString("password");
-	    			int clientId = resSet.getInt("clientId");
-	    			int money = resSet.getInt("money");
 	    			 cardNumber = resSet.getInt("cardNumber");
 	    			 cardNumberList.add(cardNumber);
+	    			 passwordList.add(password);
 	    		}
 	    		resSet.close();
 	    		statement.close();
 	    		for (int i = 0; i < cardNumberList.size(); i++) {
-	    			if (cardNumberList.get(i) == aCardNumber) {
-		    			return true;
-	    			} 
+	    			for (int j = 0; j < passwordList.size(); j++) {
+		    			if (cardNumberList.get(i) == aCardNumber && passwordList.get(j).equals(aPassword)) {
+		    				System.out.println("OK");
+			    			return true;
+		    			} else {
+			    			System.out.println("Not");
+		    			}
+	    			}
 	    		}
 				return false; 
 	    }
+	
 	
 	public void removeFromDatastore(int id) {
 		PreparedStatement statement = null;
