@@ -8,9 +8,9 @@ import java.awt.event.*;
 import java.io.*;
 
 import javax.swing.*;
-import panels.Clients;
-import panels.SpecificClient;
 
+import panels.Clients;
+import panels.InfoPanel;
 public class JabberClientThread  {
 	private static final Logger LOG = Logger.getLogger(JabberClientThread.class.getName());
 	public static void startBankAccess(InetAddress addr, int port)
@@ -135,7 +135,12 @@ public class JabberClientThread  {
 		private Socket socket;
 		private PrintStream os;
 	}
-	static class BankBranch extends javax.swing.JFrame implements Observer {
+	/**
+	 * Frame of BankBranch
+	 * @author Stacy
+	 *
+	 */
+	static class BankBranch extends JFrame implements Observer {
 
 	    /**
 	     * Creates new form BankBranch
@@ -155,21 +160,21 @@ public class JabberClientThread  {
 	    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
 	    private void initComponents() {
 
-	        jLabel1 = new javax.swing.JLabel();
-	        jTabbedPane1 = new javax.swing.JTabbedPane();
+	        jLabel1 = new JLabel();
+	        jTabbedPane1 = new JTabbedPane();
 	        addClient = new AddClient(bankAccess);
-	        specificClient1 = new SpecificClient();
+	        specificClient1 = new SpecificClient(bankAccess);
 	        clients1 = new Clients();
-	        exitButton = new javax.swing.JButton();
-	        jMenuBar1 = new javax.swing.JMenuBar();
-	        jMenu1 = new javax.swing.JMenu();
-	        jMenuItem2 = new javax.swing.JMenuItem();
-	        jMenu2 = new javax.swing.JMenu();
-	        jMenuItem1 = new javax.swing.JMenuItem();
-	        jMenuItem3 = new javax.swing.JMenuItem();
-	        jMenuItem4 = new javax.swing.JMenuItem();
+	        exitButton = new JButton();
+	        jMenuBar1 = new JMenuBar();
+	        jMenu1 = new JMenu();
+	        jMenuItem2 = new JMenuItem();
+	        jMenu2 = new JMenu();
+	        jMenuItem1 = new JMenuItem();
+	        jMenuItem3 = new JMenuItem();
+	        jMenuItem4 = new JMenuItem();
 
-	        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+	        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 	        jLabel1.setFont(new java.awt.Font("Apple Chancery", 3, 18)); // NOI18N
 	        jLabel1.setText("Main office");
@@ -214,29 +219,29 @@ public class JabberClientThread  {
 				dispose();
 				}});
 
-	        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+	        GroupLayout layout = new GroupLayout(getContentPane());
 	        getContentPane().setLayout(layout);
 	        layout.setHorizontalGroup(
-	            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-	            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+	            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	            .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
 	                .addContainerGap()
-	                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 501, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                .addComponent(jTabbedPane1, GroupLayout.PREFERRED_SIZE, 501, GroupLayout.PREFERRED_SIZE)
 	                .addGap(18, 18, 18)
-	                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-	                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-	                    .addComponent(exitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	                    .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(exitButton, GroupLayout.PREFERRED_SIZE, 85, GroupLayout.PREFERRED_SIZE))
 	                .addContainerGap())
 	        );
 	        layout.setVerticalGroup(
-	            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	            .addGroup(layout.createSequentialGroup()
 	                .addContainerGap()
-	                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 262, Short.MAX_VALUE)
-	                .addComponent(exitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 262, Short.MAX_VALUE)
+	                .addComponent(exitButton, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE)
 	                .addGap(19, 19, 19))
 	            .addGroup(layout.createSequentialGroup()
-	                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+	                .addComponent(jTabbedPane1, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
 	                .addContainerGap())
 	        );
 
@@ -253,16 +258,16 @@ public class JabberClientThread  {
 	    private BankAccess bankAccess;
 	    private AddClient addClient;
 	    private Clients clients1;
-	    private javax.swing.JButton exitButton;
-	    private javax.swing.JLabel jLabel1;
-	    private javax.swing.JMenu jMenu1;
-	    private javax.swing.JMenu jMenu2;
-	    private javax.swing.JMenuBar jMenuBar1;
-	    private javax.swing.JMenuItem jMenuItem1;
-	    private javax.swing.JMenuItem jMenuItem2;
-	    private javax.swing.JMenuItem jMenuItem3;
-	    private javax.swing.JMenuItem jMenuItem4;
-	    private javax.swing.JTabbedPane jTabbedPane1;
+	    private JButton exitButton;
+	    private JLabel jLabel1;
+	    private JMenu jMenu1;
+	    private JMenu jMenu2;
+	    private JMenuBar jMenuBar1;
+	    private JMenuItem jMenuItem1;
+	    private JMenuItem jMenuItem2;
+	    private JMenuItem jMenuItem3;
+	    private JMenuItem jMenuItem4;
+	    private JTabbedPane jTabbedPane1;
 	    private SpecificClient specificClient1;
 	    // End of variables declaration//GEN-END:variables
 		@Override
@@ -276,6 +281,12 @@ public class JabberClientThread  {
 				}});		
 		}
 	}
+	
+	/**
+	 * Add client panel
+	 * @author Stacy
+	 *
+	 */
 	static class AddClient extends JPanel implements Observer {
 
 	    /**
@@ -458,5 +469,307 @@ public class JabberClientThread  {
 			
 		}
 	}
+	static class SpecificClient extends JPanel implements Observer {
+
+	    /**
+	     * Creates new form SpecificClient
+	     */
+	    public SpecificClient(BankAccess bank) {
+	    	this.access = bank;
+	    	this.access.addObserver(this);
+	        initComponents();
+	    }
+
+	    /**
+	     * This method is called from within the constructor to initialize the form.
+	     * WARNING: Do NOT modify this code. The content of this method is always
+	     * regenerated by the Form Editor.
+	     */
+	    @SuppressWarnings("unchecked")
+	    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+	    private void initComponents() {
+
+	        jLabel1 = new JLabel();
+	        jLabel2 = new JLabel();
+	        jLabel3 = new JLabel();
+	        firstNField = new JTextField();
+	        lastNField = new JTextField();
+	        jLabel5 = new JLabel();
+	        lastNField1 = new JTextField();
+	        jButton1 = new JButton();
+	        jButton2 = new JButton();
+	        jTabbedPane1 = new JTabbedPane();
+	        infoPanel1 = new InfoPanel();
+	        withdrawPnl1 = new WithdrawPnl(access);
+	        addMoneyPanel2 = new AddMoneyPanel(access);
+
+	        jLabel1.setFont(new java.awt.Font("Malayalam MN", 3, 18)); // NOI18N
+	        jLabel1.setText("Client Profile");
+
+	        jLabel2.setFont(new java.awt.Font("Luminari", 0, 13)); // NOI18N
+	        jLabel2.setText("First name");
+
+	        jLabel3.setFont(new java.awt.Font("Luminari", 0, 13)); // NOI18N
+	        jLabel3.setText("Last name");
+
+	        jLabel5.setFont(new java.awt.Font("Luminari", 0, 13)); // NOI18N
+	        jLabel5.setText("Password");
+
+	        jButton1.setText("Get info");
+
+	        jButton2.setText("Update");
+
+	        jTabbedPane1.addTab("Info", infoPanel1);
+	        jTabbedPane1.addTab("Withdraw", withdrawPnl1);
+	        jTabbedPane1.addTab("Add", addMoneyPanel2);
+
+	        GroupLayout layout = new GroupLayout(this);
+	        this.setLayout(layout);
+	        layout.setHorizontalGroup(
+	            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	            .addGroup(layout.createSequentialGroup()
+	                .addContainerGap()
+	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	                    .addGroup(layout.createSequentialGroup()
+	                        .addComponent(jLabel5, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
+	                        .addGap(0, 341, Short.MAX_VALUE))
+	                    .addGroup(layout.createSequentialGroup()
+	                        .addComponent(jButton2, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
+	                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                        .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 129, GroupLayout.PREFERRED_SIZE))
+	                    .addGroup(layout.createSequentialGroup()
+	                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	                            .addComponent(jLabel3, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(jLabel2, GroupLayout.PREFERRED_SIZE, 91, GroupLayout.PREFERRED_SIZE))
+	                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	                            .addComponent(jTabbedPane1, GroupLayout.Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+	                            .addGroup(layout.createSequentialGroup()
+	                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+	                                    .addComponent(lastNField, GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+	                                    .addComponent(firstNField)
+	                                    .addComponent(lastNField1))
+	                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                                .addComponent(jButton1)))))
+	                .addContainerGap())
+	        );
+	        layout.setVerticalGroup(
+	            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	            .addGroup(layout.createSequentialGroup()
+	                .addContainerGap()
+	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+	                    .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(jButton2, GroupLayout.PREFERRED_SIZE, 37, GroupLayout.PREFERRED_SIZE))
+	                .addGap(24, 24, 24)
+	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+	                    .addComponent(jLabel2, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(firstNField, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(jButton1, GroupLayout.PREFERRED_SIZE, 37, GroupLayout.PREFERRED_SIZE))
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	                    .addComponent(jLabel3)
+	                    .addComponent(lastNField, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE))
+	                .addGap(18, 18, 18)
+	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	                    .addComponent(jLabel5)
+	                    .addComponent(lastNField1, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE))
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
+	                .addContainerGap())
+	        );
+	    }// </editor-fold>//GEN-END:initComponents
+
+
+	    // Variables declaration - do not modify//GEN-BEGIN:variables
+	    private BankAccess access;
+	    private AddMoneyPanel addMoneyPanel2;
+	    private JTextField firstNField;
+	    private InfoPanel infoPanel1;
+	    private JButton jButton1;
+	    private JButton jButton2;
+	    private JLabel jLabel1;
+	    private JLabel jLabel2;
+	    private JLabel jLabel3;
+	    private JLabel jLabel5;
+	    private JTabbedPane jTabbedPane1;
+	    private JTextField lastNField;
+	    private JTextField lastNField1;
+	    private WithdrawPnl withdrawPnl1;
+	    // End of variables declaration//GEN-END:variables
+		@Override
+		public void update(Observable o, Object arg) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+
+	static class WithdrawPnl extends JPanel implements Observer {
+
+	    /**
+	     * Creates new form WithdrawPnl
+	     */
+	    public WithdrawPnl(BankAccess bank) {
+	    	this.access = bank;
+	    	this.access.addObserver(this);
+	        initComponents();
+	    }
+
+	    /**
+	     * This method is called from within the constructor to initialize the form.
+	     * WARNING: Do NOT modify this code. The content of this method is always
+	     * regenerated by the Form Editor.
+	     */
+	    @SuppressWarnings("unchecked")
+	    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+	    private void initComponents() {
+
+	        withdrawButton = new JButton();
+	        withdrawField = new JTextField();
+	        jLabel1 = new JLabel();
+
+	        setPreferredSize(new java.awt.Dimension(321, 119));
+
+	        withdrawButton.setFont(new java.awt.Font("Luminari", 2, 13)); // NOI18N
+	        withdrawButton.setText("Perform");
+
+	        jLabel1.setFont(new java.awt.Font("Luminari", 1, 14)); // NOI18N
+	        jLabel1.setText("Withdraw    money");
+
+	        GroupLayout layout = new GroupLayout(this);
+	        this.setLayout(layout);
+	        layout.setHorizontalGroup(
+	            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	            .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+	                .addContainerGap()
+	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+	                    .addGroup(layout.createSequentialGroup()
+	                        .addGap(0, 0, Short.MAX_VALUE)
+	                        .addComponent(withdrawButton, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE))
+	                    .addGroup(layout.createSequentialGroup()
+	                        .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE)
+	                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                        .addComponent(withdrawField, GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)))
+	                .addContainerGap())
+	        );
+	        layout.setVerticalGroup(
+	            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	            .addGroup(layout.createSequentialGroup()
+	                .addGap(28, 28, 28)
+	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+	                    .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(withdrawField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                .addComponent(withdrawButton, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
+	                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+	        );
+	    }
+
+	    private JLabel jLabel1;
+	    private BankAccess access;
+	    private JButton withdrawButton;
+	    private JTextField withdrawField;
+	    // End of variables declaration//GEN-END:variables
+		@Override
+		public void update(Observable o, Object arg) {
+			// TODO 
+			
+		}
+	}
+
+	static class AddMoneyPanel extends JPanel implements Observer {
+
+	    /**
+	     * Creates new form AddMoneyPanel
+	     */
+	    public AddMoneyPanel(BankAccess bank) {
+	    	this.access = bank;
+	    	this.access.addObserver(this);
+	        initComponents();
+	    }
+
+	    /**
+	     * This method is called from within the constructor to initialize the form.
+	     * WARNING: Do NOT modify this code. The content of this method is always
+	     * regenerated by the Form Editor.
+	     */
+	    @SuppressWarnings("unchecked")
+	    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+	    private void initComponents() {
+
+	        jLabel1 = new JLabel();
+	        addMoneyField = new JTextField();
+	        addMoneyButton = new JButton();
+	        addMoneyButton.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					try
+					{
+						int moneySum = Integer.valueOf(addMoneyField.getText());
+					}
+					catch(Exception ex)
+					{
+						 JOptionPane.showMessageDialog(null, "Field must contain only numbers");
+					}
+					
+				}});
+	        jLabel1.setFont(new java.awt.Font("Luminari", 1, 14)); // NOI18N
+	        jLabel1.setText("Add money");
+
+	        addMoneyField.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                addMoneyFieldActionPerformed(evt);
+	            }
+	        });
+
+	        addMoneyButton.setFont(new java.awt.Font("Luminari", 2, 13)); // NOI18N
+	        addMoneyButton.setText("Perform");
+
+	        GroupLayout layout = new GroupLayout(this);
+	        this.setLayout(layout);
+	        layout.setHorizontalGroup(
+	            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	            .addGroup(layout.createSequentialGroup()
+	                .addContainerGap()
+	                .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE)
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                .addComponent(addMoneyField, GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+	                .addContainerGap())
+	            .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+	                .addGap(0, 0, Short.MAX_VALUE)
+	                .addComponent(addMoneyButton, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE))
+	        );
+	        layout.setVerticalGroup(
+	            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	            .addGroup(layout.createSequentialGroup()
+	                .addGap(28, 28, 28)
+	                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+	                    .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(addMoneyField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                .addComponent(addMoneyButton, GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE))
+	        );
+	    }// </editor-fold>//GEN-END:initComponents
+
+	    private void addMoneyFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addMoneyFieldActionPerformed
+	        // TODO add your handling code here:
+	    }//GEN-LAST:event_addMoneyFieldActionPerformed
+
+
+	    // Variables declaration - do not modify//GEN-BEGIN:variables
+	    private BankAccess access;
+	    private JButton addMoneyButton;
+	    private JTextField addMoneyField;
+	    private JLabel jLabel1;
+	    // End of variables declaration//GEN-END:variables
+		@Override
+		public void update(Observable o, Object arg) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+
+
 
 }
