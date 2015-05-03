@@ -128,6 +128,10 @@ public class BankService {
 	    		}
 	    		return false;
 	    }
+	 public static boolean isClientPresent(String name, String pass)
+	 {
+		 return false;
+	 }
 	    
 	 /**
 	  * 
@@ -310,5 +314,27 @@ public class BankService {
 		return "F";
 		 
 	 }
+	 
+		 /**
+		  * 
+		  * @param password
+		  * @return id or -1 if client wasn`t find
+		  */
+		  	 public static int findClient(String name)
+		  	 {
+		  		try
+				 {
+					 Statement st = connection.createStatement();
+		             ResultSet res = st.executeQuery("SELECT * FROM Bank WHERE name=\""+name+"\";");
+		             if(res.next()){
+		            return res.getInt("id");	
+		             }
+				 }
+				 catch(SQLException ex)
+				 {
+					 ex.printStackTrace();
+				 }
+		  		 return -1;
+		  	 }
 
 }

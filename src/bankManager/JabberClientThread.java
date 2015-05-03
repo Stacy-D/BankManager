@@ -250,15 +250,9 @@ public class JabberClientThread  {
 		@Override
 		public void update(Observable o, Object arg) {
 			final Object finalArg = arg;
-			SwingUtilities.invokeLater(new Runnable(){
-
-				@Override
-				public void run() {
-					JOptionPane.showMessageDialog(null, finalArg.toString());
-				}});		
-		}
+			System.out.println("Command into BankBranch "+finalArg.toString());
 	}
-	
+	}
 	/**
 	 * Add client panel
 	 * @author Stacy
@@ -319,19 +313,20 @@ public class JabberClientThread  {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-				//TODO addition of a client
 					String firstName = firstNField.getText();
 					String lastName = lastNField.getText();
 					String id = ID.getText();
 					String pass = password.getText();
+					firstNField.setText("");
+					lastNField.setText("");
+					ID.setText("");
+					password.setText("");
 					if(firstName.equals("")||lastName.equals("")||id.equals("")||pass.equals(""))
 					{
 						JOptionPane.showMessageDialog(null, "Some fields are empty");
 						return;
 					}
 					access.addClient(firstName, lastName, id, pass);
-					
-				
 				}});
 
 	        GroupLayout layout = new GroupLayout(this);
@@ -446,6 +441,7 @@ public class JabberClientThread  {
 			
 		}
 	}
+	
 	static class SpecificClient extends JPanel implements Observer {
 
 	    /**
@@ -799,7 +795,8 @@ public class JabberClientThread  {
 					try
 					{
 						int moneySum = Integer.valueOf(addMoneyField.getText());
-						if(moneySum == 0) return;
+						addMoneyField.setText("");
+						if(moneySum <= 0) return;
 						access.addMoney(lastName, firstName, password, moneySum);
 						access.getInfo(lastName, firstName, password);
 					}
@@ -860,6 +857,7 @@ public class JabberClientThread  {
 		public void update(Observable o, Object arg) {
 			final Object finalArg = arg;
 			SwingUtilities.invokeLater(new Runnable(){
+			
 
 				@Override
 				public void run() {
