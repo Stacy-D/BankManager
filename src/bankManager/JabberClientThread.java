@@ -13,15 +13,20 @@ public class JabberClientThread  {
 	private static final Logger LOG = Logger.getLogger(JabberClientThread.class.getName());
 	public static void startBankAccess(InetAddress addr, int port)
 	{
-		BankAccess access = new BankAccess(addr, port);
+		final int fport = port;
+	
+		final BankAccess  access = new BankAccess(addr, port);
+		 java.awt.EventQueue.invokeLater(new Runnable() {
+	            public void run() {
 		JFrame frame = new BankBranch(access);
-		frame.setTitle("Connected to BankManager at port: "+port);
+		frame.setTitle("Connected to BankManager at port: "+fport);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		frame.setVisible(true);
-		
+	            }
+		 });
 	}
 
 	
