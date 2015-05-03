@@ -286,4 +286,26 @@ public class BankService {
     	} 
 		return false;
     }
+	
+	/**
+	 * 
+	 */
+	
+	public static void showAllClients(){
+        try{
+            Statement st = connection.createStatement();
+            ResultSet res = st.executeQuery("SELECT * FROM Bank");
+            while (res.next()) {
+                String name = res.getString("name");
+                System.out.println (res.getShort("id")+" "+name);
+            }
+            res.close();
+            st.close();
+            System.out.println("Hi");
+        }catch(SQLException e){
+            System.out.println("Wrong SQL");
+            e.printStackTrace();
+        }
+    }
+
 }
