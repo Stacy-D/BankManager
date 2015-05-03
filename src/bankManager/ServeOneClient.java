@@ -82,14 +82,17 @@ public class ServeOneClient extends Thread{
 	 * @param currentLine
 	 */
 	private void addMoney(String command) {
+		System.out.println(command);
 		String name = command.substring(command.indexOf("NM")+2, command.indexOf("PASS"));
 		String password = command.substring(command.indexOf("PASS")+3,command.indexOf("ADD"));
 		try{
-			int add = Integer.valueOf(command.indexOf("ADD")+3);
+			int add = Integer.valueOf(command.substring(command.indexOf("ADD")+3));
+			System.out.println("Add "+add);
 			//TODO here add money to user account if it was found
-		//	BankService.addMoneyByName(name, password, add);
+     	if(BankService.addMoneyByName(name, password, add))
 			outStr.println("RESPAddmoneyRESOK");
-			// or outStr.println("REJECTED");
+			else outStr.println("RESPAddmoneyRESF");
+			 //or outStr.println("REJECTED");
 			outStr.flush();
 		}
 		catch(Exception e)
@@ -107,10 +110,10 @@ public class ServeOneClient extends Thread{
 		String name = command.substring(command.indexOf("NM")+2, command.indexOf("PASS"));
 		String password = command.substring(command.indexOf("PASS")+3,command.indexOf("MINUS"));
 		try{
-			int add = Integer.valueOf(command.indexOf("MINUS")+5);
-			//TODO here add money to user account if it was found
+			int add = Integer.valueOf(command.substring(command.indexOf("MINUS")+5));
+			if(BankService.withdrawByName(name,password,add))
 			outStr.println("RESPWithdrawRESOK");
-			// or outStr.println("REJECTED");
+			else outStr.println("RESPWithdrawRESF");
 			outStr.flush();
 		}
 		catch(Exception e)
@@ -131,7 +134,7 @@ public class ServeOneClient extends Thread{
 	System.out.println(new Client(name,id,password,money).toString());
 	// info about successful action
 	Client temp = new Client(name,id,password,money);
-	//BankService.addClientToDatastore(temp);
+	BankService.addClientToDatastore(temp);
 	outStr.println("RESPAddclientRESOKCARD0000111122220000");
 	outStr.flush();
 	}
