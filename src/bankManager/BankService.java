@@ -21,17 +21,22 @@ public class BankService {
 	private static Connection connection;
 	private Client client;
 	
+	private static int clientMoney;
+	private static int clientLimit;
+	
 	private static final int MAX_LIMIT = 15000;
 	
 	BankService() {
-		
+		connection = null;
+		clientMoney = 0;
+		clientLimit = 15000;
 	}
 	
 	/**
-	 * 
+	 * create sql table
 	 */
 	
-	public void createDatastore() {
+	public static void createDatastore() {
 		 try {
 	            Class.forName("org.sqlite.JDBC");
 	            connection = DriverManager.getConnection("jdbc:sqlite: Bank");
@@ -50,11 +55,11 @@ public class BankService {
 	}
 	
 	/**
-	 * 
+	 * add client to sql
 	 * @param aClient
 	 */
 	
-	public void addClientToDatastore(Client aClient) {
+	public static void addClientToDatastore(Client aClient) {
 		if (aClient != null ) {
 			try{
 	        	String name = aClient.getName();
@@ -63,13 +68,14 @@ public class BankService {
 	        	int cardNumber = aClient.getCardNumber();
 	        	int money = aClient.getMoneyOnBanlAccount();
 	          
-	        	PreparedStatement statement = connection.prepareStatement("INSERT INTO Bank(name, password, clientId, money, cardNumber, moneyLimit) VALUES (?,?,?,?,?, 15000)");
+	        	PreparedStatement statement = connection.prepareStatement("INSERT INTO Bank(name, password,"
+	        			+ " clientId, money, cardNumber, moneyLimit) VALUES (?,?,?,?,?,?)");
 	            statement.setString(1, name);
 	            statement.setString(2, password);
 	            statement.setString(3, clientId);
 	            statement.setInt(4, money);
 	            statement.setInt(5, cardNumber);
-
+	            statement.setInt(6, clientLimit);
 	            int result = statement.executeUpdate();
 
 	            statement.close();
@@ -102,7 +108,7 @@ public class BankService {
 	    			 name = resSet.getString("name");
 	    			String password = resSet.getString("password");
 	    			int clientId = resSet.getInt("clientId");
-	    			int money = resSet.getInt("money");
+	    			clientMoney = resSet.getInt("money");
 	    			int cardNumber = resSet.getInt("cardNumber");
 	    			int limit = resSet.getInt("moneyLimit");
 	    			nameList.add(name);
@@ -132,7 +138,7 @@ public class BankService {
 	  * @throws SQLException
 	  */
 	 
-	 public boolean findByCardNumber(int aCardNumber, String aPassword) throws SQLException {
+	 public static boolean findByCardNumber(int aCardNumber, String aPassword) throws SQLException {
 		 Statement statement = null;
 	    	int cardNumber  = 0;
 	    	ArrayList<Integer> cardNumberList = new ArrayList<Integer>();
@@ -144,8 +150,9 @@ public class BankService {
 	    			String name = resSet.getString("name");
 	    			String password = resSet.getString("password");
 	    			int clientId = resSet.getInt("clientId");
-	    			int money = resSet.getInt("money");
+	    			clientMoney = resSet.getInt("money");
 	    			 cardNumber = resSet.getInt("cardNumber");
+	    			 int dayLimit = resSet.getInt("moneyLimit");
 	    			 cardNumberList.add(cardNumber);
 	    			 passwordList.add(password);
 	    		}
@@ -174,14 +181,16 @@ public class BankService {
 	  * @throws SQLException
 	  */
 	 
-	 public  boolean withdrawByName(String name, String password, int money, int currentSum) throws SQLException {
+	 public  static boolean withdrawByName(String name, String password, int money) throws SQLException {
 		 if (findByName(name, password)) {
-			 if (money <= MAX_LIMIT && currentSum >= money) {
-				 int withdraw = currentSum - money;
-				 PreparedStatement statement = connection.prepareStatement("UPDATE Bank set money"
+			 if (money <= MAX_LIMIT && clientMoney >= money) {
+				 int withdraw = clientMoney - money;
+				 clientLimit -= withdraw;
+				 PreparedStatement statement = connection.prepareStatement("UPDATE Bank set money, moneyLimit"
 				 		+ " = ? WHERE name = ?");
 				 statement.setInt(1, withdraw);
-				 statement.setString(2, name);
+				 statement.setInt(2, clientLimit);
+				 statement.setString(3, name);
 				 statement.executeUpdate();
 				 
 			 }
@@ -190,14 +199,16 @@ public class BankService {
 		 return false;
 	 }
 	 
-	 public  boolean withdrawByCard(int aCardNumber, String password, int money, int currentSum) throws SQLException {
+	 public static boolean withdrawByCard(int aCardNumber, String password, int money) throws SQLException {
 		 if (findByCardNumber(aCardNumber, password)) {
-			 if (money <= MAX_LIMIT && currentSum >= money) {
-				 int withdraw = currentSum - money;
-				 PreparedStatement statement = connection.prepareStatement("UPDATE Bank set money"
+			 if (money <= MAX_LIMIT && clientMoney >= money) {
+				 int withdraw = clientMoney - money;
+				 clientLimit -= withdraw;
+				 PreparedStatement statement = connection.prepareStatement("UPDATE Bank set money, moneyLimit"
 				 		+ " = ? WHERE cardNumber = ?");
 				 statement.setInt(1, withdraw);
-				 statement.setInt(2, aCardNumber);
+				 statement.setInt(2, clientLimit);
+				 statement.setInt(3, aCardNumber);
 				 statement.executeUpdate();
 				 
 			 }
@@ -217,9 +228,9 @@ public class BankService {
 	  * @throws SQLException
 	  */
 	 
-	 public boolean addMoneyByName(String aName, String aPassword, int aMoney, int currentSum) throws SQLException {
+	 public static boolean addMoneyByName(String aName, String aPassword, int aMoney) throws SQLException {
 		 if (findByName(aName, aPassword)) {
-				 int addMoney = currentSum + aMoney;
+				 int addMoney = clientMoney + aMoney;
 				 PreparedStatement statement = connection.prepareStatement("UPDATE Bank set money"
 				 		+ " = ? WHERE name = ?");
 				 statement.setInt(1, addMoney);
@@ -239,9 +250,9 @@ public class BankService {
 	  * @throws SQLException
 	  */
 	 
-	 public boolean addMoneyByCardNumber(int aCardNumber, String aPassword, int aMoney, int currentSum) throws SQLException {
+	 public static boolean addMoneyByCardNumber(int aCardNumber, String aPassword, int aMoney) throws SQLException {
 		 if (findByCardNumber(aCardNumber, aPassword)) {
-			 int addMoney = currentSum + aMoney;
+			 int addMoney = clientMoney + aMoney;
 			 PreparedStatement statement = connection.prepareStatement("UPDATE Bank set money"
 			 		+ " = ? WHERE name = ?");
 			 statement.setInt(1, addMoney);
@@ -261,7 +272,7 @@ public class BankService {
 	  * @throws SQLException
 	  */
 	 
-	public boolean removeFromDatastore(int id, Client aClient) throws SQLException {
+	public static boolean removeFromDatastore(int id, Client aClient) throws SQLException {
 		PreparedStatement statement = null;
 		int clientMoney = aClient.getMoneyOnBanlAccount();
 		if (clientMoney <= MAX_LIMIT) {
@@ -275,7 +286,4 @@ public class BankService {
     	} 
 		return false;
     }
-	
-
-	
 }
