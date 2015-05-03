@@ -127,16 +127,20 @@ public class BankService {
 	    }
 	    
 	 
-	 public boolean findByCardNumber(int aCardNumber, String aPassword) throws SQLException {
+	 public boolean findByCardNumber(int aCardNumber, String aPassword, int aMoneyToChange) throws SQLException {
 		 Statement statement = null;
 	    	int cardNumber  = 0;
+	    	int  money = 0;
+	    	String password = null;
 	    	ArrayList<Integer> cardNumberList = new ArrayList<Integer>();
 	    	ArrayList<String> passwordList = new ArrayList<String>();
 	    		statement = connection.createStatement();
 	    		ResultSet resSet = statement.executeQuery("SELECT * FROM Bank;");
 	    		while (resSet.next()) {
-	    			String password = resSet.getString("password");
+	    			password = resSet.getString("password");
 	    			 cardNumber = resSet.getInt("cardNumber");
+	    			money = resSet.getInt("money");
+		    			
 	    			 cardNumberList.add(cardNumber);
 	    			 passwordList.add(password);
 	    		}
@@ -146,6 +150,7 @@ public class BankService {
 	    			for (int j = 0; j < passwordList.size(); j++) {
 		    			if (cardNumberList.get(i) == aCardNumber && passwordList.get(j).equals(aPassword)) {
 		    				System.out.println("OK");
+		    				updateStatus(money, cardNumber, password, aMoneyToChange);
 			    			return true;
 		    			} else {
 			    			System.out.println("Not");
@@ -155,6 +160,22 @@ public class BankService {
 				return false; 
 	    }
 	
+	 private boolean updateStatus(int aMoney, int aCard, String aPassword, int currentMoney) throws SQLException {
+		 if (addAccessWithCardNumber(aCard, aPassword)) {
+			 int addedMoney = aMoney + currentMoney;
+			 PreparedStatement ps = connection.prepareStatement(
+				      "UPDATE Bank SET money = ? WHERE cardNumber = ? ");
+			 ps.setInt(1, addedMoney);
+			 ps.setInt(2, aCard);
+			 ps.executeUpdate();
+			 ps.close();
+			 System.out.println("OK");
+			 return true;
+		}
+		return false;
+	 }
+	 
+	 
 	
 	public void removeFromDatastore(int id) {
 		PreparedStatement statement = null;
@@ -174,5 +195,20 @@ public class BankService {
     			}
     		}
     	}
+	}
+	
+	/**
+	 * access client to enter to his/her account in ATM
+	 * @param aCardNumber
+	 * @param aPassword
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public boolean addAccessWithCardNumber(int aCardNumber, String aPassword) throws SQLException {
+		if (findByCardNumber(aCardNumber, aPassword)) {
+			return true;
+		}
+		return false;
 	}
 }
