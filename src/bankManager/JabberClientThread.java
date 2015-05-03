@@ -171,11 +171,6 @@ public class JabberClientThread  {
 	        jMenu1.setText("File");
 
 	        jMenuItem2.setText("Exit");
-	        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
-	            public void actionPerformed(java.awt.event.ActionEvent evt) {
-	                jMenuItem2ActionPerformed(evt);
-	            }
-	        });
 	        jMenu1.add(jMenuItem2);
 
 	        jMenuBar1.add(jMenu1);
@@ -230,11 +225,6 @@ public class JabberClientThread  {
 
 	        pack();
 	    }// </editor-fold>//GEN-END:initComponents
-
-	    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-	        // TODO add your handling code here:
-	    }//GEN-LAST:event_jMenuItem2ActionPerformed
-
 	  
 
 	    // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -507,13 +497,20 @@ public class JabberClientThread  {
 					JOptionPane.showMessageDialog(null, "Some fields are empty");
 					return;
 				}
-				if(withdrawPnl1 == null && addMoneyPanel2 == null && infoPanel1 == null){
+				if(withdrawPnl1 == null && addMoneyPanel2 == null && infoPanel1 == null)
+				{
 				withdrawPnl1 = new WithdrawPnl(access,pass, lastName,firstName);
 				addMoneyPanel2 = new AddMoneyPanel(access,pass, lastName,firstName);
 				infoPanel1 = new InfoPanel(access);
 				jTabbedPane1.addTab("Withdraw", withdrawPnl1);
 			    jTabbedPane1.addTab("Add", addMoneyPanel2);
-		        jTabbedPane1.addTab("Info", infoPanel1);}
+		        jTabbedPane1.addTab("Info", infoPanel1);
+		        }
+				else
+				{
+					withdrawPnl1.setNewInfo(firstName, lastName, pass);
+					addMoneyPanel2.setNewInfo(firstName, lastName, pass);
+				}
 				access.getInfo(lastName, firstName, pass);	
 				}});
 
@@ -625,7 +622,10 @@ public class JabberClientThread  {
 							}
 							if(finalArg.contains("F"))
 							{
-								JOptionPane.showMessageDialog(null, "Something went wrong");
+								JOptionPane.showMessageDialog(null, "Something went wrong/n"
+										+ "Possible reasons:/n"
+										+ "- No such a client into database/n"
+										+ "- Wrong password");
 							}
 						}
 					}
@@ -717,6 +717,12 @@ public class JabberClientThread  {
 	        );
 	    }
 
+	    public void setNewInfo(String firstName,String lastName,String password)
+	    {
+	    	this.firstName = firstName;
+	    	this.lastName = lastName;
+	    	this.password = password;
+	    }
 	    private String firstName;
 	    private String lastName;
 	    private String password;
@@ -740,6 +746,14 @@ public class JabberClientThread  {
 							{
 								JOptionPane.showMessageDialog(null, "Money was withdrawed from your account");
 								
+							}
+							else if(finalArg.toString().contains("F"))
+							{
+								JOptionPane.showMessageDialog(null, "Problems occured while withdrawing money from client account /n"
+										+ "Possible reasons:/n"
+										+ "- Client is absent in database/n"
+										+ "- Wrong password/n"
+										+ "- You can`t exceed limit of 150,000");
 							}
 						}
 					}
@@ -822,7 +836,12 @@ public class JabberClientThread  {
 	        );
 	    }// </editor-fold>//GEN-END:initComponents
 
-	    // Variables declaration - do not modify//GEN-BEGIN:variables
+	    public void setNewInfo(String firstName,String lastName,String password)
+	    {
+	    	this.firstName = firstName;
+	    	this.lastName = lastName;
+	    	this.password = password;
+	    }
 	    private String firstName;
 	    private String lastName;
 	    private String password;
@@ -847,6 +866,10 @@ public class JabberClientThread  {
 							{
 								JOptionPane.showMessageDialog(null, "Money was added to your account");
 								
+							}
+							else if(finalArg.toString().contains("F"))
+							{
+								JOptionPane.showMessageDialog(null, "Problems occured while adding money to client account");
 							}
 						}
 					}
