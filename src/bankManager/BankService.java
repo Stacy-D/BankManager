@@ -1,6 +1,3 @@
-/**
- * 
- */
 package bankManager;
 
 import java.sql.Connection;
@@ -11,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
+
 
 /**
  * @author natalia
@@ -272,20 +270,42 @@ public class BankService {
 	  * @throws SQLException
 	  */
 	 
-	public static boolean removeFromDatastore(int id, Client aClient) throws SQLException {
+	public static boolean removeFromDatastoreByName(String aClientName , Client aClient) throws SQLException {
 		PreparedStatement statement = null;
 		int clientMoney = aClient.getMoneyOnBanlAccount();
 		if (clientMoney <= MAX_LIMIT) {
     		statement = connection.prepareStatement("DELETE FROM Bank WHERE id = ?");
-    		statement.setInt(1, id);
+    		statement.setString(1, aClientName);
     		statement.executeUpdate();
     		clientMoney = 0;
-    		System.out.println("The client with id " + id + " was deleted");
+    		System.out.println("The client with client name " + aClientName + " was deleted");
     		statement.close();
     		return true;
     	} 
 		return false;
     }
+	
+	/**
+	  * close client deposit in a bank
+	  * @param id
+	  * @param aClient
+	  * @throws SQLException
+	  */
+	 
+	public static boolean removeFromDatastoreByCardNumber(int aClientCardNumber , Client aClient) throws SQLException {
+		PreparedStatement statement = null;
+		int clientMoney = aClient.getMoneyOnBanlAccount();
+		if (clientMoney <= MAX_LIMIT) {
+   		statement = connection.prepareStatement("DELETE FROM Bank WHERE id = ?");
+   		statement.setInt(1, aClientCardNumber);
+   		statement.executeUpdate();
+   		clientMoney = 0;
+   		System.out.println("The client with client card number " + aClientCardNumber + " was deleted");
+   		statement.close();
+   		return true;
+   	} 
+		return false;
+   }
 	
 	/**
 	 * 
