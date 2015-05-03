@@ -1,4 +1,4 @@
-package MyBankTest;
+package bankManager;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,12 +16,14 @@ import java.util.Properties;
 public class BankService {
 	
 	private static Connection connection;
-	private Client client;
-	
 	private static  int clientMoney;
 	private static int clientLimit;
+	private static int currentCardNumber = 0000;
+	private static final String FIRPRTCARD = "1111 2222 3333 ";
 	
-	private static final int MAX_LIMIT = 15000;
+		
+	
+	private static final int MAX_LIMIT = 150000;
 	
 	BankService() {
 		connection = null;
@@ -36,9 +38,9 @@ public class BankService {
 	public static void createDatastore() {
 		 try {
 	            Class.forName("org.sqlite.JDBC");
-	            connection = DriverManager.getConnection("jdbc:sqlite: Bank");
+	            connection = DriverManager.getConnection("jdbc:sqlite: Bank.db");
 	            PreparedStatement st = connection.prepareStatement("create table if not exists 'Bank' "
-	            		+ "('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'name' text, 'clientId' INTEGER,"
+	            		+ "('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'name' text, 'clientId' text,"
 	            		+ "'password' text, 'money' INTEGER,'cardNumber' INTEGER, 'moneyLimit' INTEGER);");
 	            int result = st.executeUpdate();
 	        	System.out.println("Operation done successfully");
@@ -58,16 +60,17 @@ public class BankService {
 	 * @param aClient
 	 * @throws SQLException 
 	 */
-	
-	public static void addClientToDatastore(Client aClient) throws SQLException {
-		if (aClient != null && !findByName(aClient.getName(), aClient.getPassword()) 
-				&& !findByCardNumber(aClient.getCardNumber(), aClient.getPassword())) {
+	public static String addClientToDatastore(Client aClient)  {
+		if (aClient != null && findClient(aClient.getName())==-1) {
 			try {
 	        	String name = aClient.getName();
 	        	String password = aClient.getPassword();
 	        	String clientId = aClient.getId();
-	        	int cardNumber = aClient.getCardNumber();
+	        	int cardNumber =  currentCardNumber;
+	        	String toReturn = currentCartNumber();
+	        	getNextCard();
 	        	int money = aClient.getMoneyOnBanlAccount();
+	        	int limit = 150000;
 	        	PreparedStatement statement = connection.prepareStatement("INSERT INTO Bank(name, password,"
 	        			+ " clientId, money, cardNumber, moneyLimit) VALUES (?,?,?,?,?,?)");
 	            statement.setString(1, name);
@@ -75,16 +78,18 @@ public class BankService {
 	            statement.setString(3, clientId);
 	            statement.setInt(4, money);
 	            statement.setInt(5, cardNumber);
-	            statement.setInt(6, clientLimit);
+	            statement.setInt(6, limit);
 	            int result = statement.executeUpdate();
 	            statement.close();
 	        	System.out.println("Operation done successfully");
+	        	return toReturn;
 	        	
 	        }catch (SQLException e) {
 	            System.out.println("Wrong SQL");
 	            e.printStackTrace();
 	        }
 		}
+		return null;
 	}
 	
 	/**
@@ -197,23 +202,30 @@ public class BankService {
 	  */
 	 
 	 public  static boolean withdrawByName(String name, String password, int money) throws SQLException {
-		 if (findByName(name, password)) {
-			 if (money <= MAX_LIMIT && clientMoney >= money) {
-				 int withdraw = clientMoney - money;
-				 int result = clientLimit - withdraw;
-				 PreparedStatement statement = connection.prepareStatement("UPDATE Bank SET money = ?, moneyLimit = ?");
-				 statement.setInt(1, withdraw);
-				 statement.setInt(2, result);
-				 statement.executeUpdate();
-				 System.out.println("money res: " + withdraw);
-				 System.out.println("money limit: " + result);
-			 }
+		 if(money > MAX_LIMIT) return false;
+		 Statement statement = connection.createStatement();
+			try{
+				ResultSet res = statement.executeQuery("SELECT * FROM Bank WHERE name=\""+name+"\" AND password =\""+password+"\";");
+				if(res.next())
+				{
+					int currMoney = res.getInt("money");
+					System.out.println("Current money "+ currMoney);
+					int limit = res.getInt("moneyLimit");
+					if ((currMoney < money) ||(limit == 0) || limit < money) return false;
+					currMoney-=money;
+					limit-=money;
+					PreparedStatement st = connection.prepareStatement("UPDATE Bank SET money = ?, moneyLimit = ? WHERE name = ?");
+					st.setInt(1, currMoney);
+					st.setInt(2, limit);
+					st.setString(3, name);
+					st.executeUpdate();
 			 return true;
-		 } else {
-			 System.out.println("You haven't enougth money to withdrow");
-			 return false;
-		 }
-		 
+				}}
+				catch(SQLException ex)
+				{
+				ex.printStackTrace();
+				}
+		 return false;
 	 }
 	 
 	 public static boolean withdrawByCard(int aCardNumber, String password, int money) throws SQLException {
@@ -244,18 +256,25 @@ public class BankService {
 	  */
 	 
 	 public static boolean addMoneyByName(String aName, String aPassword, int aMoney) throws SQLException {
-		 if (findByName(aName, aPassword)) {
-				 int addMoney = clientMoney + aMoney;
-				 PreparedStatement statement = connection.prepareStatement("UPDATE Bank SET money"
-				 		+ " = ? WHERE name = ?");
-				 statement.setInt(1, addMoney);
-				 statement.setString(2, aName);
-				 statement.executeUpdate();
+		 		Statement statement = connection.createStatement();
+			try{
+				ResultSet res = statement.executeQuery("SELECT * FROM Bank WHERE name=\""+aName+"\" AND password =\""+aPassword+"\";");
+				if(res.next())
+				{
+				int currMoney = res.getInt("money") + aMoney;
+				 PreparedStatement st = connection.prepareStatement("UPDATE Bank SET money"
+					 		+ " = ? WHERE name = ?");
+				 st.setInt(1, currMoney);
+				 st.setString(2, aName);
+				 st.executeUpdate();
 			 return true;
-		 }
-	    	return false;
-	    }
-	    
+				}}
+				catch(SQLException ex)
+				{
+				ex.printStackTrace();
+				}
+			return false;
+	 }  
 	 /**
 	  * 
 	  * @param aCardNumber
@@ -287,18 +306,25 @@ public class BankService {
 	  * @throws SQLException
 	  */
 	 
-	public static boolean removeFromDatastoreByName(String aClientName , Client aClient) throws SQLException {
-		PreparedStatement statement = null;
-		int clientMoney = aClient.getMoneyOnBanlAccount();
-		if (clientMoney <= MAX_LIMIT) {
-    		statement = connection.prepareStatement("DELETE FROM Bank WHERE id = ?");
-    		statement.setString(1, aClientName);
-    		statement.executeUpdate();
-    		clientMoney = 0;
-    		System.out.println("The client with client name " + aClientName + " was deleted");
-    		statement.close();
-    		return true;
-    	} 
+	public static boolean removeFromDatastoreByName(String nameSearch , String password) throws SQLException {
+		Statement statement = connection.createStatement();
+		try{
+			ResultSet res = statement.executeQuery("SELECT * FROM Bank WHERE name=\""+nameSearch+"\" AND password =\""+password+"\";");
+			if(res.next())
+			{
+				int money = res.getInt("money");
+				int limit = res.getInt("moneyLimit");
+				if(money > MAX_LIMIT || limit < money) return false;
+				PreparedStatement st = connection.prepareStatement("DELETE FROM Bank WHERE name = ?");
+				st.setString(1, nameSearch);
+				st.executeUpdate();
+				return true;
+				}
+			}
+		catch(SQLException e){
+            System.out.println("Wrong SQL");
+            e.printStackTrace();
+        }
 		return false;
     }
 	
@@ -344,6 +370,72 @@ public class BankService {
             e.printStackTrace();
         }
     }
+	/**
 
+	* Info about client if it exists and password is correct
+
+	* @param nameSearch
+
+	* @param pass
+
+	* @return
+
+	* @throws SQLException
+
+	*/
+	public static String getInfo(String nameSearch, String pass) throws SQLException
+	{
+		Statement statement = connection.createStatement();
+		try{
+			ResultSet res = statement.executeQuery("SELECT * FROM Bank WHERE name=\""+nameSearch+"\" AND password =\""+pass+"\";");
+			if(res.next())
+			{
+
+				return "OKBAL"+res.getInt("money")+"LIM"+res.getInt("moneyLimit");
+			}}
+			catch(SQLException ex)
+			{
+			ex.printStackTrace();
+			}
+		return "F";
+		}
+	 /**
+	  * 
+	  * @param password
+	  * @return id or -1 if client wasn`t find
+	  */
+	  	 public static int findClient(String name)
+	  	 {
+	  		try
+			 {
+				 Statement st = connection.createStatement();
+	             ResultSet res = st.executeQuery("SELECT * FROM Bank WHERE name=\""+name+"\";");
+	             if(res.next()){
+	            return res.getInt("id");	
+	             }
+			 }
+			 catch(SQLException ex)
+			 {
+				 ex.printStackTrace();
+			 }
+	  		 return -1;
+	  	 }
+
+	 	public static int getNextCard()
+		{
+			currentCardNumber++;
+			return currentCardNumber;
+		}
+		public static String currentCartNumber()
+		{
+			String current = String.valueOf(currentCardNumber);
+			if(current.length()!=4)
+			{
+				if(current.length() == 1) current = "000"+current;
+				else if (current.length() == 2) current = "00"+ current;
+				else current = "0"+current;
+			}
+			return FIRPRTCARD+current;
+		}
 	
 }

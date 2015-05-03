@@ -51,9 +51,19 @@ public class ServeOneClient extends Thread{
 		}
 	}
 	private void removeClient(String command) {
+		System.out.println(command);
 		String name = command.substring(command.indexOf("NM")+2, command.indexOf("PASS"));
 		String password = command.substring(command.indexOf("PASS")+3);
-		// here call method to remove client TODO
+		try {
+			if(BankService.removeFromDatastoreByName(name, password))
+			{	outStr.println("RESPRemoveclientRESOK");
+			System.out.println("Done remove");}
+			else outStr.println("RESPRemoveclientRESF");
+			outStr.flush();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -134,8 +144,10 @@ public class ServeOneClient extends Thread{
 	System.out.println(new Client(name,id,password,money).toString());
 	// info about successful action
 	Client temp = new Client(name,id,password,money);
-	BankService.addClientToDatastore(temp);
-	outStr.println("RESPAddclientRESOKCARD0000111122220000");
+	String res = BankService.addClientToDatastore(temp);
+	if(res!=null)
+	outStr.println("RESPAddclientRESOKCARD"+res);
+	else outStr.println("RESPAddclientRESF");
 	outStr.flush();
 	}
 

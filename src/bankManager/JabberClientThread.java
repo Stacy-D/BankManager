@@ -486,6 +486,24 @@ public class JabberClientThread  {
 	        jLabel5.setText("Password");
 
 	        jButton1.setText("Get info");
+	        firstNField.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					jTabbedPane1.setVisible(false);
+				}});
+	        lastNField.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					jTabbedPane1.setVisible(false);
+				}});
+	        passField.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					jTabbedPane1.setVisible(false);
+				}});
 	        jButton1.addActionListener(new ActionListener(){
 
 				@Override
@@ -629,6 +647,16 @@ public class JabberClientThread  {
 										+ "- Wrong password");
 							}
 						}
+						else if(finalArg.startsWith("RESPRemoveclient"))
+						{
+							if(finalArg.contains("OK"))
+							{
+								jTabbedPane1.setVisible(false);
+								firstNField.setText("");
+								lastNField.setText("");
+								passField.setText("");
+							}	
+						}
 					}
 				}});
 			
@@ -675,6 +703,7 @@ public class JabberClientThread  {
 					try
 					{
 						int moneySum = Integer.valueOf(withdrawField.getText());
+						withdrawField.setText("");
 						if(moneySum == 0) return;
 						access.withdrawMoney(lastName, firstName, password, moneySum);
 						access.getInfo(lastName, firstName, password);
