@@ -8,7 +8,11 @@ import java.awt.event.*;
 import java.io.*;
 
 import javax.swing.*;
-
+/**
+ * 
+ * @author Stacy
+ *
+ */
 public class JabberClientThread  {
 	private static final Logger LOG = Logger.getLogger(JabberClientThread.class.getName());
 	public static void startBankAccess(InetAddress addr, int port)
@@ -52,7 +56,12 @@ public class JabberClientThread  {
 		        		 }
 		        		 catch(IOException ex)
 		        		 {
-		        			 notifyObservers(ex);
+		        			 try {
+			      		            socket.close();
+			      		         }
+			      		         catch (IOException e2) {
+			      		            LOG.warning("Socket wasn`t closed");
+			      		         }
 		        		 }
 		        	 }
 		         };
@@ -250,7 +259,6 @@ public class JabberClientThread  {
 		@Override
 		public void update(Observable o, Object arg) {
 			final Object finalArg = arg;
-			System.out.println("Command into BankBranch "+finalArg.toString());
 	}
 	}
 	/**
@@ -434,6 +442,12 @@ public class JabberClientThread  {
 								cardNumber.setText(finalArg.toString().substring(finalArg.toString().indexOf("CARD")+4));
 								cardNumber.setVisible(true);
 								
+							}
+							else
+							{
+								JOptionPane.showMessageDialog(null, "Client can`t be added. Possible reasons:\n"
+										+ "- Client is present in database\n"
+										+ "- Some other reasons");
 							}
 						}
 					}
@@ -641,9 +655,9 @@ public class JabberClientThread  {
 							}
 							if(finalArg.contains("F"))
 							{
-								JOptionPane.showMessageDialog(null, "Something went wrong/n"
-										+ "Possible reasons:/n"
-										+ "- No such a client into database/n"
+								JOptionPane.showMessageDialog(null, "Something went wrong\n"
+										+ "Possible reasons:\n"
+										+ "- No such a client into database\n"
 										+ "- Wrong password");
 							}
 						}
@@ -651,11 +665,16 @@ public class JabberClientThread  {
 						{
 							if(finalArg.contains("OK"))
 							{
+								JOptionPane.showMessageDialog(null, "Client was removed from BankManager");
 								jTabbedPane1.setVisible(false);
 								firstNField.setText("");
 								lastNField.setText("");
 								passField.setText("");
-							}	
+							}
+							else
+							{
+								JOptionPane.showMessageDialog(null, "Client cannot be removed today");
+							}
 						}
 					}
 				}});
@@ -779,10 +798,10 @@ public class JabberClientThread  {
 							}
 							else if(finalArg.toString().contains("F"))
 							{
-								JOptionPane.showMessageDialog(null, "Problems occured while withdrawing money from client account /n"
-										+ "Possible reasons:/n"
-										+ "- Client is absent in database/n"
-										+ "- Wrong password/n"
+								JOptionPane.showMessageDialog(null, "Problems occured while withdrawing money from client account \n"
+										+ "Possible reasons:\n"
+										+ "- Client is absent in database\n"
+										+ "- Wrong password\n"
 										+ "- You can`t exceed limit of 150,000");
 							}
 						}

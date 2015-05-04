@@ -12,9 +12,8 @@ import java.net.Socket;
 public class BankServer {
 		public static void startServer(int port) throws IOException{
 			ServerSocket s = new ServerSocket(Integer.valueOf(port));
-			System.out.println("Bank server in action."); 
+			BankService.createDatastore();
 			try{
-				BankService.createDatastore();
 				while (true){
 					Socket socket = s.accept();
 					try{

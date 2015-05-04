@@ -3,7 +3,11 @@ package bankManager;
 import java.io.*;
 import java.net.*;
 import java.sql.SQLException;
-
+/**
+ * 
+ * @author Stacy
+ *
+ */
 public class ServeOneClient extends Thread{
 
 	public ServeOneClient(Socket s) throws IOException{
@@ -25,7 +29,6 @@ public class ServeOneClient extends Thread{
 		while(true)
 		{
 			String currentLine = inRead.readLine();
-			System.out.println(currentLine);
 			if(currentLine!=null){
 			if(currentLine.equals("END_OF_SESSION")){ 
 				break;}
@@ -46,22 +49,24 @@ public class ServeOneClient extends Thread{
 				socket.close();
 			}
 			catch(IOException e){
-				System.err.println("Сокет не закрито ...");
+				System.err.println("Socket wasn`t closed");
 			}
 		}
 	}
+	/**
+	 * Server accepts "remove client" call
+	 * @param command
+	 */
 	private void removeClient(String command) {
-		System.out.println(command);
 		String name = command.substring(command.indexOf("NM")+2, command.indexOf("PASS"));
 		String password = command.substring(command.indexOf("PASS")+3);
 		try {
 			if(BankService.removeFromDatastoreByName(name, password))
 			{	outStr.println("RESPRemoveclientRESOK");
-			System.out.println("Done remove");}
+			}
 			else outStr.println("RESPRemoveclientRESF");
 			outStr.flush();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -73,18 +78,12 @@ public class ServeOneClient extends Thread{
 	private void getInfo(String command) {
 		String name = command.substring(command.indexOf("NM")+2, command.indexOf("PASS"));
 		String password = command.substring(command.indexOf("PASS")+3);
-		// TODO
-		// Here use method to find cliend and his info
 		try {
 			outStr.println("RESPGetinfoRES"+BankService.getInfo(name, password));
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//another possibility when not found (or password do not match) outStr.println("REJECTED");
 		outStr.flush();
-		
-		
 	}
 
 	/**
@@ -98,11 +97,9 @@ public class ServeOneClient extends Thread{
 		try{
 			int add = Integer.valueOf(command.substring(command.indexOf("ADD")+3));
 			System.out.println("Add "+add);
-			//TODO here add money to user account if it was found
      	if(BankService.addMoneyByName(name, password, add))
 			outStr.println("RESPAddmoneyRESOK");
 			else outStr.println("RESPAddmoneyRESF");
-			 //or outStr.println("REJECTED");
 			outStr.flush();
 		}
 		catch(Exception e)
@@ -121,6 +118,7 @@ public class ServeOneClient extends Thread{
 		String password = command.substring(command.indexOf("PASS")+3,command.indexOf("MINUS"));
 		try{
 			int add = Integer.valueOf(command.substring(command.indexOf("MINUS")+5));
+			//withdraw money here
 			if(BankService.withdrawByName(name,password,add))
 			outStr.println("RESPWithdrawRESOK");
 			else outStr.println("RESPWithdrawRESF");
@@ -133,23 +131,22 @@ public class ServeOneClient extends Thread{
 		
 		
 	}
-
+	/**
+	 * Server accepts "add client" call
+	 * @param command
+	 */
 	private void addClient(String command) {
-	String name = command.substring(command.indexOf("NM")+2, command.indexOf("ID"));
-	String id = command.substring(command.indexOf("ID")+2, command.indexOf("PASS"));
-	String password = command.substring(command.indexOf("PASS")+3);
-	int money = 120;
-	// TODO
-	// replace this with addition to database
-	System.out.println(new Client(name,id,password,money).toString());
-	// info about successful action
-	Client temp = new Client(name,id,password,money);
-	String res = BankService.addClientToDatastore(temp);
-	if(res!=null)
-	outStr.println("RESPAddclientRESOKCARD"+res);
-	else outStr.println("RESPAddclientRESF");
-	outStr.flush();
-	}
+		String name = command.substring(command.indexOf("NM")+2, command.indexOf("ID"));
+		String id = command.substring(command.indexOf("ID")+2, command.indexOf("PASS"));
+		String password = command.substring(command.indexOf("PASS")+3);
+		int money = 0;
+		// info about successful action
+		String res = BankService.addClientToDatastore(new Client(name,id,password,money));
+		if(res!=null)
+			outStr.println("RESPAddclientRESOKCARD"+res);
+		else outStr.println("RESPAddclientRESF");
+		outStr.flush();
+		}
 
 	private Socket socket;
 	private PrintWriter outStr;
