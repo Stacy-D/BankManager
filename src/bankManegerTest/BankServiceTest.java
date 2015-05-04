@@ -12,7 +12,7 @@ public class BankServiceTest {
 	public void test() {
 		BankService.createDatastore();
 		System.out.println(BankService.findClient("Anny L"));
-		//BankService.setNewLimit("Stacy D");
+	//	BankService.setNewLimit("Ann Ja");
 	}
 
 }

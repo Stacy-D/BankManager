@@ -52,7 +52,7 @@ public class BankService {
 	 * @param aClient
 	 * @throws SQLException 
 	 */
-	public static String addClientToDatastore(Client aClient)  {
+	public synchronized static String addClientToDatastore(Client aClient)  {
 		if (aClient != null && findClient(aClient.getName())==-1) {
 			try {
 	        	String name = aClient.getName();
@@ -91,7 +91,7 @@ public class BankService {
 	  * @throws SQLException
 	  */
 	 
-	 public  static boolean withdrawByName(String name, String password, int money) throws SQLException {
+	 public synchronized static boolean withdrawByName(String name, String password, int money) throws SQLException {
 		 if(money > MAX_LIMIT) return false;
 		 Statement statement = connection.createStatement();
 			try{
@@ -124,7 +124,7 @@ public class BankService {
 	  * @return
 	  * @throws SQLException
 	  */
-	 public static boolean withdrawByCard(int aCardNumber, String password, int money) throws SQLException {
+	 public synchronized static boolean withdrawByCard(int aCardNumber, String password, int money) throws SQLException {
 		 if(money > MAX_LIMIT) return false;
 		 Statement statement = connection.createStatement();
 			try{
@@ -161,7 +161,7 @@ public class BankService {
 	  * @throws SQLException
 	  */
 	 
-	 public static boolean addMoneyByName(String aName, String aPassword, int aMoney) throws SQLException {
+	 public synchronized static boolean addMoneyByName(String aName, String aPassword, int aMoney) throws SQLException {
 		 		Statement statement = connection.createStatement();
 			try{
 				ResultSet res = statement.executeQuery("SELECT * FROM Bank WHERE name=\""+aName+"\" AND password =\""+aPassword+"\";");
@@ -190,7 +190,7 @@ public class BankService {
 	  * @throws SQLException
 	  */
 	 
-	 public static boolean addMoneyByCardNumber(int aCardNumber, String aPassword, int aMoney) throws SQLException {
+	 public synchronized static boolean addMoneyByCardNumber(int aCardNumber, String aPassword, int aMoney) throws SQLException {
 		 Statement statement = connection.createStatement();
 			try{
 				ResultSet res = statement.executeQuery("SELECT * FROM Bank WHERE cardNumber=\""+aCardNumber+"\" AND password =\""+aPassword+"\";");
@@ -220,7 +220,7 @@ public class BankService {
 	  * @throws SQLException
 	  */
 	 
-	public static boolean removeFromDatastoreByName(String nameSearch , String password) throws SQLException {
+	public synchronized static boolean removeFromDatastoreByName(String nameSearch , String password) throws SQLException {
 		Statement statement = connection.createStatement();
 		try{
 			ResultSet res = statement.executeQuery("SELECT * FROM Bank WHERE name=\""+nameSearch+"\" AND password =\""+password+"\";");
@@ -236,7 +236,6 @@ public class BankService {
 				}
 			}
 		catch(SQLException e){
-            System.out.println("Wrong SQL");
             e.printStackTrace();
         }
 		return false;
@@ -249,7 +248,7 @@ public class BankService {
 	  * @throws SQLException
 	  */
 	 
-	public static boolean removeFromDatastoreByCardNumber(int aClientCardNumber , Client aClient) throws SQLException {
+	public synchronized static boolean removeFromDatastoreByCardNumber(int aClientCardNumber , Client aClient) throws SQLException {
 		PreparedStatement statement = null;
 		int clientMoney = aClient.getMoneyOnBanlAccount();
 		if (clientMoney <= MAX_LIMIT) {
@@ -257,7 +256,6 @@ public class BankService {
    		statement.setInt(1, aClientCardNumber);
    		statement.executeUpdate();
    		clientMoney = 0;
-   		System.out.println("The client with client card number " + aClientCardNumber + " was deleted");
    		statement.close();
    		return true;
    	} 
@@ -268,19 +266,16 @@ public class BankService {
 	 * 
 	 */
 	
-	public static void showAllClients(){
+	private static void showAllClients(){
         try{
             Statement st = connection.createStatement();
             ResultSet res = st.executeQuery("SELECT * FROM Bank");
             while (res.next()) {
                 String name = res.getString("name");
-                System.out.println (res.getShort("id")+" "+name);
             }
             res.close();
             st.close();
-            System.out.println("Hi");
         }catch(SQLException e){
-            System.out.println("Wrong SQL");
             e.printStackTrace();
         }
     }
@@ -297,7 +292,7 @@ public class BankService {
 	* @throws SQLException
 
 	*/
-	public static String getInfo(String nameSearch, String pass) throws SQLException
+	public synchronized static String getInfo(String nameSearch, String pass) throws SQLException
 	{
 		Statement statement = connection.createStatement();
 		try{
