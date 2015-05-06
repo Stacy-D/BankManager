@@ -313,6 +313,26 @@ public class BankService {
 			}
 		return "F";
 		}
+	public synchronized static String getInfoATM(int cardNumber, String pass) throws SQLException
+	{
+		Statement statement = connection.createStatement();
+		try{
+			ResultSet res = statement.executeQuery("SELECT * FROM Bank WHERE cardNumber=\""+cardNumber+"\" AND password =\""+pass+"\";");
+			if(res.next())
+			{
+				String date = new SimpleDateFormat("yyyy.MM.dd").format(Calendar.getInstance().getTime());
+				String dateIn = res.getString("date");
+				if(!date.equals(dateIn)) setNewLimit(res.getString("name"));
+				String result =  "OKNM"+res.getString("name")+"BAL"+res.getInt("money")+"LIM"+res.getInt("moneyLimit");
+				statement.close();
+				return result;
+			}}
+			catch(SQLException ex)
+			{
+			ex.printStackTrace();
+			}
+		return "F";
+		}
 	 private static void setNewLimit(String nameSearch) {
 			try{
 				Statement statement = connection.createStatement();
@@ -378,7 +398,10 @@ public class BankService {
 			Statement st = connection.createStatement();
 			ResultSet res = st.executeQuery("SELECT * FROM Bank");
 			int size = 0;
-			while(res.next()) size++;
+			while(res.next()){
+				size = res.getInt("cardNumber");
+			}
+			size++;
 			currentCardNumber = size;
 			}
 			catch(SQLException ex)

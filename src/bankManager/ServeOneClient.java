@@ -33,10 +33,12 @@ public class ServeOneClient extends Thread{
 			if(currentLine.equals("END_OF_SESSION")){ 
 				break;}
 			if(currentLine.startsWith("Addclient")) addClient(currentLine);
-			if(currentLine.startsWith("Withdraw")) withdrawAction(currentLine);
-			if(currentLine.startsWith("Addmoney")) addMoney(currentLine);
-			if(currentLine.startsWith("Getinfo")) getInfo(currentLine);
-			if(currentLine.startsWith("Removeclient")) removeClient(currentLine);
+			else if(currentLine.startsWith("ATMGetinfo")) getInfoATM(currentLine);
+			else if(currentLine.startsWith("ATMWithdraw")) withdrawActionATM(currentLine);
+			else if(currentLine.startsWith("Withdraw")) withdrawAction(currentLine);
+			else if(currentLine.startsWith("Addmoney")) addMoney(currentLine);
+			else if(currentLine.startsWith("Getinfo")) getInfo(currentLine);
+			else if(currentLine.startsWith("Removeclient")) removeClient(currentLine);
 			}
 		}
 		}
@@ -53,6 +55,36 @@ public class ServeOneClient extends Thread{
 			}
 		}
 	}
+	private void withdrawActionATM(String command) {
+		String card = command.substring(command.indexOf("CD")+2, command.indexOf("PASS"));
+		String password = command.substring(command.indexOf("PASS")+3,command.indexOf("MINUS"));
+		try{
+			int cardNumber = Integer.valueOf(card);
+			int add = Integer.valueOf(command.substring(command.indexOf("MINUS")+5));
+			//withdraw money here
+			if(BankService.withdrawByCard(cardNumber,password,add))
+			outStr.println("RESPWithdrawRESOK");
+			else outStr.println("RESPWithdrawRESF");
+			outStr.flush();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private void getInfoATM(String command) {
+		String card = command.substring(command.indexOf("CD")+2, command.indexOf("PASS"));
+		String password = command.substring(command.indexOf("PASS")+3);
+		try {
+			int cardNumber = Integer.valueOf(card);
+			outStr.println("RESPGetinfoRES"+BankService.getInfoATM(cardNumber, password));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		outStr.flush();
+	}
+
 	/**
 	 * Server accepts "remove client" call
 	 * @param command
@@ -126,8 +158,6 @@ public class ServeOneClient extends Thread{
 		{
 			e.printStackTrace();
 		}
-		
-		
 	}
 	/**
 	 * Server accepts "add client" call

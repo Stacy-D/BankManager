@@ -122,7 +122,16 @@ public class Main extends javax.swing.JFrame {
      	   int port = Integer.valueOf(fieldPortClient.getText());
      	   JOptionPane.showMessageDialog(null, "Trying accessing server at port "+port);
      	  InetAddress addr = InetAddress.getByName(null);
-     	  JabberClientThread.startBankAccess(addr, port);
+
+  		Object[] selectioValues = { "BankBranch","ATM"};
+  		String initialSection = "Server";
+  		
+  		Object selection = JOptionPane.showInputDialog(null, "Login as : ", "BankManager", JOptionPane.QUESTION_MESSAGE, null, selectioValues, initialSection);
+  		if(selection.equals("BankBranch")){
+  			JabberClientThread.startBankAccess(addr, port);
+  		}else if(selection.equals("ATM")){
+  			ATMClient.startBankAccess(addr, port);
+  		}
      	   this.dispose();
 
         }
