@@ -296,7 +296,7 @@ public class JabberClientThread  {
 	        jLabel4 = new JLabel();
 	        ID = new JTextField();
 	        jLabel5 = new JLabel();
-	        password = new JTextField();
+	        password = new JPasswordField();
 	        registerButton = new JButton();
 	        textCN = new JLabel();
 	        cardNumber = new JLabel();
@@ -423,7 +423,7 @@ public class JabberClientThread  {
 	    private JLabel cardNumber;
 	    private JTextField lastNField;
 	    private JTextField ID;
-	    private JTextField password;
+	    private JPasswordField password;
 	    // End of variables declaration//GEN-END:variables
 		@Override
 		public void update(Observable o, Object arg) {
@@ -483,7 +483,7 @@ public class JabberClientThread  {
 	        firstNField = new JTextField();
 	        lastNField = new JTextField();
 	        jLabel5 = new JLabel();
-	        passField = new JTextField();
+	        passField = new JPasswordField();
 	        jButton1 = new JButton();
 	        removeButto = new JButton();
 	        jTabbedPane1 = new JTabbedPane();
@@ -634,7 +634,7 @@ public class JabberClientThread  {
 	    private JLabel jLabel5;
 	    private JTabbedPane jTabbedPane1;
 	    private JTextField lastNField;
-	    private JTextField passField;
+	    private JPasswordField passField;
 	    private WithdrawPnl withdrawPnl1;
 	    // End of variables declaration//GEN-END:variables
 		@Override

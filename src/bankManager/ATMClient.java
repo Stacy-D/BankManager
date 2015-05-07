@@ -1,7 +1,5 @@
 package bankManager;
-import java.awt.CardLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -137,7 +135,7 @@ public class ATMClient {
 	        jLabel2 = new JLabel();
 	        jLabel3 = new JLabel();
 	        cardNumberField = new JTextField();
-	        passwordField = new JTextField();
+	        passwordField = new JPasswordField();
 	        okButton = new JButton();
 	        cancelButton = new JButton();
 	        Info = new JPanel();
@@ -426,7 +424,7 @@ public class ATMClient {
 	    private JTabbedPane jTabbedPane1;
 	    private JLabel limitText;
 	    private JButton okButton;
-	    private JTextField passwordField;
+	    private JPasswordField passwordField;
 	    private JButton performButton;
 	    private JTextField withdrawField;
 	    // End of variables declaration                   
