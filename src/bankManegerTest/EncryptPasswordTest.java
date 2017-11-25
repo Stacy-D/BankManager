@@ -8,9 +8,9 @@ import bankManager.EncryptPassword;
 
 public class EncryptPasswordTest {
 
-	@Test
-	public void test() {
-	assertEquals(EncryptPassword.encrypt("Hello"), EncryptPassword.encrypt("Hello"));
-	}
+//	@Test
+//	public void test() {
+//	assertEquals(EncryptPassword.encrypt("Hello"), EncryptPassword.encrypt("Hello"));
+//	}
 
 }

@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author Stacy
+ * @author natalia
  */
 public class Main extends javax.swing.JFrame {
 

@@ -10,7 +10,7 @@ import java.io.*;
 import javax.swing.*;
 /**
  * 
- * @author Stacy
+ * @author natalia
  *
  */
 public class JabberClientThread  {
@@ -136,7 +136,7 @@ public class JabberClientThread  {
 	}
 	/**
 	 * Frame of BankBranch
-	 * @author Stacy
+	 * @author natalia
 	 *
 	 */
 	static class BankBranch extends JFrame implements Observer {
@@ -182,22 +182,22 @@ public class JabberClientThread  {
 
 	        exitButton.setText("Exit");
 
-	        jMenu1.setText("File");
+	   //     jMenu1.setText("File");
 
-	        jMenuItem2.setText("Exit");
+	   //     jMenuItem2.setText("Exit");
 	        jMenu1.add(jMenuItem2);
 
 	        jMenuBar1.add(jMenu1);
 
-	        jMenu2.setText("Clients");
+	 //       jMenu2.setText("Clients");
 
-	        jMenuItem1.setText("Add client");
+	  //      jMenuItem1.setText("Add client");
 	        jMenu2.add(jMenuItem1);
 
-	        jMenuItem3.setText("Show clients");
+	   //     jMenuItem3.setText("Show clients");
 	        jMenu2.add(jMenuItem3);
 
-	        jMenuItem4.setText("Operations");
+	//        jMenuItem4.setText("Operations");
 	        jMenu2.add(jMenuItem4);
 
 	        jMenuBar1.add(jMenu2);
@@ -263,7 +263,7 @@ public class JabberClientThread  {
 	}
 	/**
 	 * Add client panel
-	 * @author Stacy
+	 * @author natalia
 	 *
 	 */
 	static class AddClient extends JPanel implements Observer {
@@ -535,10 +535,14 @@ public class JabberClientThread  {
 				withdrawPnl1 = new WithdrawPnl(access,pass, lastName,firstName);
 				addMoneyPanel2 = new AddMoneyPanel(access,pass, lastName,firstName);
 				infoPanel1 = new InfoPanel(access);
+				//
 				jTabbedPane1.addTab("Withdraw", withdrawPnl1);
 			    jTabbedPane1.addTab("Add", addMoneyPanel2);
 		        jTabbedPane1.addTab("Info", infoPanel1);
-		        }
+		        jTabbedPane1.addTab("Currency", infoPanel1);
+		        jTabbedPane1.addTab("Credit", infoPanel1);
+		       //
+				}
 				else
 				{
 					withdrawPnl1.setNewInfo(firstName, lastName, pass);

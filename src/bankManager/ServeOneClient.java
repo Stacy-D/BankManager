@@ -5,7 +5,7 @@ import java.net.*;
 import java.sql.SQLException;
 /**
  * 
- * @author Stacy
+ * @author natalia
  *
  */
 public class ServeOneClient extends Thread{

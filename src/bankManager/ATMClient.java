@@ -14,7 +14,7 @@ import javax.swing.*;
 
 /**
  * ATM client for BankManager
- * @author Stacy
+ * @author natalia
  *
  */
 public class ATMClient {

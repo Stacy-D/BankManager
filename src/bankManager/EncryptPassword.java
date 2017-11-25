@@ -1,7 +1,5 @@
 package bankManager;
 
-import org.apache.commons.codec.digest.DigestUtils;
-
 public class EncryptPassword {
 	
 	/**
@@ -11,8 +9,8 @@ public class EncryptPassword {
 	 */
 	public static String encrypt(String password)
 	{
-		 String md5Hex = DigestUtils.md5Hex(password);
-		 return md5Hex;
+	//	 String md5Hex = DigestUtils.md5Hex(password);
+		 return null;
 	}
 
 }

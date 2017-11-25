@@ -6,7 +6,7 @@ import java.net.Socket;
 
 /**
  * Bank server, which will deal with database
- * @author Stacy
+ * @author natalia
  *
  */
 public class BankServer {
